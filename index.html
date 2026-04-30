@@ -3480,13 +3480,10 @@ function initFilters() {
   });
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-
-
 /* ======================== AUTENTICAÇÃO ======================== */
 const SENHA = 'Gerdau@Itabiritos2026';
 let _authOk    = false;
-let _authQueue = null; // callback aguardando auth
+let _authQueue = null;
 
 function authGuard(callback) {
   if (_authOk) { callback(); return; }
@@ -3510,12 +3507,13 @@ function tryAuth() {
   }
 }
 
-$('auth-confirm').addEventListener('click', tryAuth);
-$('auth-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
-$('auth-cancel').addEventListener('click', () => {
-  $('auth-overlay').style.display = 'none';
-  _authQueue = null;
-});
+document.addEventListener('DOMContentLoaded', () => {
+  $('auth-confirm').addEventListener('click', tryAuth);
+  $('auth-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
+  $('auth-cancel').addEventListener('click', () => {
+    $('auth-overlay').style.display = 'none';
+    _authQueue = null;
+  });
 
 
 /* ======================== PUBLICAR NO GITHUB ======================== */
