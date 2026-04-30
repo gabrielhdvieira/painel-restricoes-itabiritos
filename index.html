@@ -1,0 +1,3442 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#002E6D">
+<title>Painel de Restrições · Itabiritos · Gerdau</title>
+<style>
+  :root {
+    --g-primary: #002E6D;
+    --g-primary-dark: #001F4D;
+    --g-primary-light: #1E4A9C;
+    --g-accent: #FFC20E;
+    --g-accent-dark: #E0A800;
+    /* Cores dos Tipos A/B/C */
+    --tipo-a: #B91C1C;
+    --tipo-a-bg: #FEE2E2;
+    --tipo-a-soft: #FEF2F2;
+    --tipo-b: #EA580C;
+    --tipo-b-bg: #FFEDD5;
+    --tipo-b-soft: #FFF7ED;
+    --tipo-c: #16A34A;
+    --tipo-c-bg: #DCFCE7;
+    --tipo-c-soft: #F0FDF4;
+    /* Status / Outros */
+    --st-resolvida: #15803D;
+    --st-andamento: #CA8A04;
+    --st-aberto: #B91C1C;
+    --g-bg: #F1F4F8;
+    --g-bg-soft: #F8FAFC;
+    --g-border: #E2E8F0;
+    --g-border-strong: #CBD5E1;
+    --g-text: #0F172A;
+    --g-text-soft: #475569;
+    --g-text-mute: #94A3B8;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    background: var(--g-bg);
+    color: var(--g-text);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1,h2,h3,h4 { font-weight: 700; margin:0; letter-spacing: -0.01em; }
+  button { font-family: inherit; }
+
+  /* HEADER */
+  .title-bar {
+    background: linear-gradient(135deg, #001F4D 0%, #002E6D 55%, #1E4A9C 100%);
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+  }
+  .title-bar::after {
+    content:'';
+    position:absolute;
+    right:-40px; top:-40px;
+    width:240px; height:240px;
+    background: radial-gradient(circle, rgba(255,194,14,0.18) 0%, transparent 70%);
+    pointer-events:none;
+  }
+  .title-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
+    z-index: 1;
+  }
+  .logo-badge {
+    flex: 0 0 auto;
+    background: #FFC20E;
+    border-radius: 10px;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px -4px rgba(0,0,0,0.25);
+    width: 56px;
+    height: 56px;
+    overflow: hidden;
+  }
+  .logo-badge img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+  }
+  .title-txt { min-width: 0; flex: 1; }
+  .title-eyebrow {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--g-accent);
+    margin-bottom: 2px;
+  }
+  .title-main {
+    font-size: 18px;
+    line-height: 1.15;
+    font-weight: 800;
+  }
+  .title-sub {
+    font-size: 11px;
+    color: #CBD5E1;
+    font-weight: 400;
+    margin-top: 2px;
+  }
+  .live-badge {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: flex-end;
+    padding: 6px 12px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    margin-left: auto;
+    gap: 1px;
+  }
+  .live-badge .badge-label {
+    font-size: 8px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.5);
+  }
+  .live-badge .badge-value {
+    font-size: 12px;
+    font-weight: 700;
+    color: #FFC20E;
+    letter-spacing: 0.02em;
+  }
+  @media (min-width: 768px) {
+    .title-wrap { padding: 20px 32px; gap: 18px; }
+    .logo-badge { padding: 6px; width: 72px; height: 72px; }
+    .title-eyebrow { font-size: 12px; }
+    .title-main { font-size: 28px; }
+    .title-sub { font-size: 14px; }
+  }
+  @media (min-width: 1024px) {
+    .title-main { font-size: 34px; }
+  }
+
+  /* TOOLBAR */
+  .toolbar {
+    background: rgba(255,255,255,0.95);
+    border-bottom: 1px solid var(--g-border);
+  }
+  .toolbar-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+  }
+  @media (min-width: 768px) {
+    .toolbar-wrap { padding: 10px 32px; }
+  }
+  .tb-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border: 1px solid var(--g-border);
+    background: #fff;
+    color: var(--g-text-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .tb-btn:hover { background: var(--g-bg); border-color: var(--g-border-strong); }
+  .tb-btn.primary {
+    background: var(--g-primary); color: #fff; border-color: var(--g-primary);
+  }
+  .tb-btn.primary:hover { background: var(--g-primary-dark); }
+  .tb-btn.accent {
+    background: var(--g-accent); color: var(--g-primary-dark); border-color: var(--g-accent);
+  }
+  .tb-btn.accent:hover { background: var(--g-accent-dark); }
+  .tb-spacer { flex: 1; }
+  .tb-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    color: var(--g-text-soft);
+    background: var(--g-bg-soft);
+    border-radius: 999px;
+  }
+  .tb-status .dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--st-resolvida);
+    box-shadow: 0 0 0 3px rgba(22,163,74,0.18);
+  }
+
+  /* FILTERS */
+  .filter-bar {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: rgba(255,255,255,0.95);
+    backdrop-filter: saturate(140%) blur(8px);
+    -webkit-backdrop-filter: saturate(140%) blur(8px);
+    border-bottom: 1px solid var(--g-border);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+  .filter-wrap {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+  .filter-wrap .full { grid-column: 1 / -1; }
+  @media (min-width: 768px) {
+    .filter-wrap {
+      padding: 14px 32px;
+      grid-template-columns: repeat(4, minmax(0, 1fr)) minmax(180px, 2fr) auto;
+      gap: 10px;
+      align-items: end;
+    }
+    .filter-wrap .full { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1200px) {
+    .filter-wrap {
+      grid-template-columns: repeat(7, minmax(0, 1fr)) minmax(180px, 2fr) auto;
+      gap: 10px;
+    }
+    .filter-wrap .full { grid-column: auto; }
+  }
+  .f-group label {
+    display: block;
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--g-text-soft);
+    margin-bottom: 4px;
+  }
+  .f-group select, .f-group input {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid var(--g-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--g-text);
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    min-height: 38px;
+  }
+  .f-group select:focus, .f-group input:focus {
+    border-color: var(--g-primary);
+    box-shadow: 0 0 0 3px rgba(0,46,109,0.12);
+  }
+  .search-input-wrap { position: relative; }
+  .search-input-wrap svg {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--g-text-mute);
+    pointer-events: none;
+  }
+  .search-input-wrap input { padding-right: 32px; }
+  .f-actions {
+    display: flex;
+    gap: 6px;
+    align-items: stretch;
+    grid-column: 1 / -1;
+  }
+  @media (min-width: 768px) {
+    .f-actions { grid-column: auto; }
+  }
+  .btn-clear {
+    flex: 0 0 auto;
+    padding: 8px 14px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid var(--g-border);
+    background: #fff;
+    color: var(--g-text-soft);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    min-height: 38px;
+  }
+  .btn-clear:hover, .btn-clear:active { background: var(--g-bg); }
+  .result-pill {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    background: linear-gradient(135deg, #FFF8DC, #FEF3C7);
+    border: 1px solid var(--g-accent);
+    color: var(--g-primary-dark);
+    border-radius: 8px;
+    white-space: nowrap;
+    min-height: 38px;
+  }
+  .result-pill span { margin: 0 3px; }
+
+  /* MAIN */
+  main {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 16px;
+  }
+  @media (min-width: 768px) {
+    main { padding: 24px 32px; }
+  }
+  section { margin-bottom: 20px; }
+  @media (min-width: 768px) { section { margin-bottom: 28px; } }
+  .sec-title {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--g-text-soft);
+    margin: 0 4px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .sec-title::before {
+    content:'';
+    width: 3px;
+    height: 14px;
+    background: var(--g-accent);
+    border-radius: 2px;
+  }
+  .sec-title-help {
+    font-size: 10px;
+    font-weight: 500;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--g-text-mute);
+    margin-left: auto;
+  }
+
+  /* KPI CARDS */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+  @media (min-width: 640px) {
+    .kpi-grid { grid-template-columns: repeat(4, 1fr); gap: 14px; }
+  }
+  .kpi-card {
+    background: #fff;
+    border-radius: 12px;
+    padding: 14px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+    border: 1px solid var(--g-border);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .kpi-card::before {
+    content:'';
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent, var(--g-primary));
+  }
+  .kpi-card:hover { transform: translateY(-2px); box-shadow: 0 10px 24px -12px rgba(0,46,109,0.25); }
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--g-text-soft);
+    margin-bottom: 4px;
+    padding-left: 4px;
+  }
+  .kpi-value {
+    font-size: 36px;
+    font-weight: 800;
+    line-height: 1;
+    color: var(--accent, var(--g-primary));
+    padding-left: 4px;
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+  .kpi-value-detail {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--g-text-mute);
+    letter-spacing: 0.04em;
+  }
+  .kpi-sub {
+    font-size: 10px;
+    color: var(--g-text-soft);
+    margin-top: 4px;
+    padding-left: 4px;
+    line-height: 1.3;
+  }
+  @media (min-width: 640px) {
+    .kpi-card { padding: 18px; }
+    .kpi-value { font-size: 44px; }
+    .kpi-sub { font-size: 11px; }
+  }
+  .kpi-card.tipo-a { --accent: var(--tipo-a); }
+  .kpi-card.tipo-b { --accent: var(--tipo-b); }
+  .kpi-card.tipo-c { --accent: var(--tipo-c); }
+  .kpi-card.total { --accent: var(--g-primary); }
+
+  /* PANELS */
+  .panel {
+    background: #fff;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    border: 1px solid var(--g-border);
+  }
+  .panel-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 12px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--g-border);
+  }
+  .panel-title {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--g-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .panel-sub {
+    font-size: 10px;
+    color: var(--g-text-soft);
+    white-space: nowrap;
+  }
+  @media (min-width: 768px) {
+    .panel-title { font-size: 15px; }
+    .panel-sub { font-size: 11px; }
+  }
+
+  .charts-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  @media (min-width: 900px) {
+    .charts-row.gestao { grid-template-columns: 1.4fr 1fr; gap: 16px; }
+  }
+  @media (min-width: 768px) {
+    .charts-row.dist { grid-template-columns: 1fr 1fr; gap: 16px; }
+  }
+  @media (min-width: 1100px) {
+    .charts-row.dist { grid-template-columns: 1fr 1fr 1fr 1fr; }
+  }
+
+  /* ── FOCO DO DIA: Timeline horizontal ── */
+  .focus-panel { padding: 18px; }
+  .focus-meta {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+    margin-bottom: 14px;
+    padding: 8px 12px;
+    background: linear-gradient(90deg, var(--tipo-a-soft), transparent);
+    border-left: 3px solid var(--tipo-a);
+    border-radius: 0 8px 8px 0;
+    font-size: 12px;
+    color: var(--g-text);
+  }
+  .focus-meta strong { color: var(--tipo-a); font-weight: 800; }
+  .focus-timeline {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    position: relative;
+  }
+  @media (max-width: 600px) {
+    .focus-timeline { grid-template-columns: repeat(2, 1fr); }
+  }
+  .focus-zone {
+    background: var(--zone-bg, #F8FAFC);
+    border: 1px solid var(--zone-border, var(--g-border));
+    border-radius: 10px;
+    padding: 12px 10px;
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+    transition: all 0.15s;
+  }
+  .focus-zone:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -8px rgba(0,0,0,0.2);
+  }
+  .focus-zone.active {
+    box-shadow: 0 0 0 2px var(--zone-accent, var(--g-primary)), 0 8px 16px -8px rgba(0,0,0,0.25);
+    transform: translateY(-1px);
+  }
+  .focus-zone.active::after {
+    content: 'filtrando';
+    position: absolute;
+    bottom: 6px; right: 8px;
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--zone-accent);
+    opacity: 0.85;
+  }
+  .focus-zone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: var(--zone-accent, var(--g-text-mute));
+  }
+  .focus-zone.atrasada { --zone-bg: #FEF2F2; --zone-border: #FECACA; --zone-accent: var(--tipo-a); }
+  .focus-zone.atrasada::before {
+    animation: pulse-bar 1.6s ease-in-out infinite;
+  }
+  .focus-zone.hoje { --zone-bg: #FFF7ED; --zone-border: #FED7AA; --zone-accent: var(--tipo-b); }
+  .focus-zone.semana { --zone-bg: #FEFCE8; --zone-border: #FEF08A; --zone-accent: #CA8A04; }
+  .focus-zone.horizonte { --zone-bg: #F0FDF4; --zone-border: #BBF7D0; --zone-accent: var(--tipo-c); }
+  @keyframes pulse-bar { 50% { opacity: 0.4; } }
+  .focus-zone.concluida { --zone-bg: #EEF2FF; --zone-border: #C7D2FE; --zone-accent: #4F46E5; }
+  .focus-zone-label {
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--g-text-soft);
+    margin-bottom: 4px;
+  }
+  .focus-zone-period {
+    font-size: 10px;
+    color: var(--g-text-mute);
+    margin-bottom: 8px;
+  }
+  .focus-zone-count {
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--zone-accent);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .focus-zone-types {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+  }
+  .ftype {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 4px;
+    background: rgba(255,255,255,0.7);
+    color: var(--g-text);
+  }
+  .ftype.a { color: var(--tipo-a); border: 1px solid var(--tipo-a-bg); }
+  .ftype.b { color: var(--tipo-b); border: 1px solid var(--tipo-b-bg); }
+  .ftype.c { color: var(--tipo-c); border: 1px solid var(--tipo-c-bg); }
+  .ftype-dot { width: 6px; height: 6px; border-radius: 50%; }
+  .ftype.a .ftype-dot { background: var(--tipo-a); }
+  .ftype.b .ftype-dot { background: var(--tipo-b); }
+  .ftype.c .ftype-dot { background: var(--tipo-c); }
+
+  /* ── DISTRIBUIÇÃO DE PRAZOS NA LINHA DO TEMPO ── */
+  .focus-distribution {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px dashed var(--g-border);
+  }
+  .fdist-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 4px;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .fdist-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--g-text-soft);
+  }
+  .fdist-sub {
+    font-size: 10px;
+    color: var(--g-text-mute);
+  }
+  .fdist-legend {
+    display: inline-flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .fdist-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 10px;
+    color: var(--g-text-soft);
+    font-weight: 600;
+  }
+  .fdist-legend-dot {
+    width: 8px; height: 8px; border-radius: 2px;
+  }
+  .fdist-chart {
+    display: flex;
+    align-items: flex-end;
+    gap: 3px;
+    height: 130px;
+    padding: 18px 0 28px 0;
+    position: relative;
+  }
+  .fdist-col {
+    flex: 1;
+    min-width: 0;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    position: relative;
+    cursor: pointer;
+    transition: transform 0.12s;
+  }
+  .fdist-col:hover { transform: translateY(-2px); }
+  .fdist-col.empty { cursor: default; }
+  .fdist-col.empty:hover { transform: none; }
+  .fdist-col.today::before {
+    content: '';
+    position: absolute;
+    left: 50%; top: 0; bottom: 22px;
+    width: 1px;
+    border-left: 1.5px dashed var(--g-primary);
+    transform: translateX(-50%);
+    opacity: 0.55;
+    pointer-events: none;
+  }
+  .fdist-col.atrasadas .fdist-bar {
+    border-radius: 3px;
+    box-shadow: inset 0 0 0 1.5px var(--tipo-a);
+  }
+  .fdist-bar {
+    width: 100%;
+    max-width: 32px;
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 3px 3px 0 0;
+    overflow: hidden;
+    transition: filter 0.12s;
+    min-height: 2px;
+  }
+  .fdist-col.empty .fdist-bar {
+    background: repeating-linear-gradient(45deg, transparent, transparent 3px, var(--g-border) 3px, var(--g-border) 4px);
+    height: 4px !important;
+    min-height: 4px;
+    opacity: 0.6;
+  }
+  .fdist-col.active .fdist-bar { filter: brightness(1.05); box-shadow: 0 0 0 2px var(--g-primary), 0 4px 8px -2px rgba(0,0,0,0.2); }
+  .fdist-seg { width: 100%; min-height: 1px; }
+  .fdist-seg.tipo-a { background: var(--tipo-a); }
+  .fdist-seg.tipo-b { background: var(--tipo-b); }
+  .fdist-seg.tipo-c { background: var(--tipo-c); }
+  .fdist-count {
+    position: absolute;
+    top: -2px;
+    font-size: 10px;
+    font-weight: 800;
+    color: var(--g-text);
+    line-height: 1;
+  }
+  .fdist-count.zero { color: var(--g-text-mute); font-weight: 600; }
+  .fdist-label {
+    position: absolute;
+    bottom: 8px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--g-text-mute);
+    white-space: nowrap;
+    text-align: center;
+    letter-spacing: 0.02em;
+  }
+  .fdist-col.today .fdist-label { color: var(--g-primary); font-weight: 800; }
+  .fdist-col.atrasadas .fdist-label { color: var(--tipo-a); font-weight: 800; }
+  .fdist-sublabel {
+    position: absolute;
+    bottom: -4px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 8px;
+    color: var(--g-text-mute);
+    white-space: nowrap;
+  }
+  @media (max-width: 600px) {
+    .fdist-chart { gap: 2px; height: 110px; }
+    .fdist-bar { max-width: 22px; }
+    .fdist-label { font-size: 8px; }
+    .fdist-count { font-size: 9px; }
+  }
+
+  /* ── MAPA DE CARGA: Heatmap ── */
+  .load-panel { padding: 14px 16px 18px; }
+  .load-grid {
+    display: grid;
+    grid-template-columns: minmax(110px, 1.1fr) repeat(3, minmax(50px, 0.8fr)) minmax(45px, 0.65fr) minmax(38px, 42px);
+    gap: 4px;
+    align-items: stretch;
+  }
+  .load-h {
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--g-text-soft);
+    text-align: center;
+    padding: 6px 4px;
+    border-radius: 4px;
+    background: var(--g-bg);
+  }
+  .load-h.first { text-align: left; padding-left: 8px; background: transparent; }
+  .load-h.tipo-a { color: var(--tipo-a); }
+  .load-h.tipo-b { color: var(--tipo-b); }
+  .load-h.tipo-c { color: var(--tipo-c); }
+  .load-name {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 0 4px 0 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--g-text);
+  }
+  .load-name small {
+    font-size: 9px;
+    font-weight: 500;
+    color: var(--g-text-mute);
+    letter-spacing: 0.04em;
+  }
+  .load-cell {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    min-height: 38px;
+    font-size: 16px;
+    font-weight: 800;
+    transition: transform 0.1s;
+    cursor: default;
+  }
+  .load-cell.clickable { cursor: pointer; }
+  .load-cell:hover { transform: scale(1.06); z-index: 2; }
+  .load-cell.empty {
+    color: var(--g-text-mute);
+    background: #F8FAFC;
+    box-shadow: inset 0 0 0 1px var(--g-border);
+    font-weight: 400;
+    font-size: 13px;
+  }
+  .load-name.clickable { cursor: pointer; transition: background 0.15s; }
+  .load-name.clickable:hover { background: var(--g-bg-soft); border-radius: 4px; }
+  .load-total {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    min-height: 38px;
+    font-size: 15px;
+    font-weight: 800;
+    background: var(--g-primary);
+    color: #fff;
+  }
+  .load-total.clickable { cursor: pointer; transition: transform 0.1s; }
+  .load-total.clickable:hover { transform: scale(1.06); z-index: 2; }
+  .load-total.high {
+    background: var(--g-primary-dark);
+    box-shadow: 0 0 0 2px var(--g-accent);
+  }
+  .load-wa {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 5px;
+    min-height: 38px;
+    background: #25D366;
+    color: #fff;
+    cursor: pointer;
+    transition: transform 0.1s, background 0.15s;
+    border: none;
+    padding: 0;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .load-wa:hover {
+    background: #1FB055;
+    transform: scale(1.08);
+  }
+  .load-wa svg { width: 18px; height: 18px; fill: currentColor; }
+  .load-legend {
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px dashed var(--g-border);
+    font-size: 11px;
+    color: var(--g-text-soft);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+  }
+  .load-legend-key { font-weight: 700; color: var(--g-text); }
+  .load-grad {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .load-grad-bar {
+    width: 80px;
+    height: 8px;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #F8FAFC, #B91C1C);
+  }
+
+  /* DISTRIBUIÇÃO - barras */
+  .css-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 4px 0;
+  }
+  .css-bar-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .css-bar-row.clickable {
+    cursor: pointer;
+    padding: 2px 4px;
+    border-radius: 6px;
+    transition: background 0.15s;
+  }
+  .css-bar-row.clickable:hover { background: var(--g-bg-soft); }
+  .css-bar-label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--g-text);
+    min-width: 80px;
+    text-align: right;
+    flex-shrink: 0;
+  }
+  .css-bar-track {
+    flex: 1;
+    height: 28px;
+    background: var(--g-bg);
+    border-radius: 6px;
+    position: relative;
+    overflow: hidden;
+  }
+  .css-bar-fill {
+    height: 100%;
+    background: var(--bar-color, var(--g-primary));
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 0 8px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    transition: width 0.6s ease;
+  }
+  .css-bar-value {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--g-text-soft);
+    min-width: 32px;
+    text-align: left;
+  }
+
+  /* STACKED */
+  .css-stack-chart {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .css-stack-row { display: flex; flex-direction: column; gap: 4px; }
+  .css-stack-label { font-size: 11px; font-weight: 600; color: var(--g-text); }
+  .css-stack-bar {
+    display: flex;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+    background: var(--g-bg);
+  }
+  .css-stack-segment {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fff;
+    transition: flex 0.6s ease;
+  }
+  .css-stack-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 12px;
+    font-size: 11px;
+  }
+  .css-stack-legend-item { display: flex; align-items: center; gap: 6px; }
+  .css-stack-legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+  /* SPOTLIGHT */
+  .spotlight-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+  @media (min-width: 640px) { .spotlight-grid { grid-template-columns: repeat(2,1fr); } }
+  @media (min-width: 1100px) { .spotlight-grid { grid-template-columns: repeat(3,1fr); } }
+  .spot-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px;
+    border: 1px solid var(--g-border);
+    border-left: 4px solid var(--accent, var(--tipo-a));
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  .spot-card.tipo-a { --accent: var(--tipo-a); }
+  .spot-card.tipo-b { --accent: var(--tipo-b); }
+  .spot-card.tipo-c { --accent: var(--tipo-c); }
+  .spot-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .spot-title { font-size: 13px; font-weight: 600; color: var(--g-text); line-height: 1.35; }
+  .spot-meta { display: flex; gap: 6px; flex-wrap: wrap; font-size: 10px; }
+
+  /* CHIPS */
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+  .chip.blue { background: #E6ECF7; color: var(--g-primary); }
+  .chip.dark { background: var(--g-primary); color: #fff; letter-spacing: 0.04em; padding: 3px 9px; font-size: 11px; }
+  .chip.tipo-a { background: var(--tipo-a-bg); color: var(--tipo-a); }
+  .chip.tipo-b { background: var(--tipo-b-bg); color: var(--tipo-b); }
+  .chip.tipo-c { background: var(--tipo-c-bg); color: var(--tipo-c); }
+  .chip.tipo-pendente { background: #F1F5F9; color: var(--g-text-soft); border: 1px dashed var(--g-border-strong); }
+  .chip.status-aberto { background: #FEF2F2; color: var(--st-aberto); }
+  .chip.status-andamento { background: #FEFCE8; color: var(--st-andamento); }
+  .chip.status-resolvida { background: #DCFCE7; color: var(--st-resolvida); }
+  .chip.ghost { background: transparent; color: var(--g-text-soft); border: 1px dashed var(--g-border-strong); }
+  .chip.reprog-chip {
+    background: #FEF3C7;
+    color: #92400E;
+    border: 1px solid #FCD34D;
+    font-weight: 800;
+    cursor: help;
+  }
+  .chip.tipo-tag { font-size: 11px; padding: 3px 9px; letter-spacing: 0.04em; }
+  .chip.tipo-tag.editable { cursor: pointer; }
+  .chip.tipo-tag.editable:hover { box-shadow: 0 0 0 2px rgba(0,46,109,0.2); }
+  .chip.tipo-tag.inferred::after {
+    content: '?';
+    margin-left: 3px;
+    opacity: 0.65;
+    font-weight: 800;
+  }
+
+  /* CARDS / TABLE */
+  .list-panel { padding: 0; overflow: hidden; }
+  .list-panel-header {
+    padding: 14px 16px;
+    background: var(--g-bg-soft);
+    border-bottom: 1px solid var(--g-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .list-panel-header h3 {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--g-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .view-toggle { display: flex; gap: 2px; background: var(--g-border); padding: 2px; border-radius: 8px; }
+  .view-toggle button {
+    background: transparent;
+    border: 0;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    color: var(--g-text-soft);
+    min-height: 30px;
+  }
+  .view-toggle button.active { background: #fff; color: var(--g-primary); box-shadow: 0 1px 2px rgba(0,0,0,0.1); }
+
+  /* CARDS VIEW */
+  .cards-view { padding: 12px; display: grid; gap: 10px; }
+  .r-card {
+    background: #fff;
+    border: 1px solid var(--g-border);
+    border-radius: 10px;
+    overflow: hidden;
+    transition: box-shadow 0.15s;
+    border-left: 4px solid var(--card-accent, var(--g-primary));
+  }
+  .r-card.tipo-a { --card-accent: var(--tipo-a); }
+  .r-card.tipo-b { --card-accent: var(--tipo-b); }
+  .r-card.tipo-c { --card-accent: var(--tipo-c); }
+  .r-card.resolvida { opacity: 0.6; }
+  .r-card.resolvida .r-card-risk { text-decoration: line-through; }
+  .r-card:hover { box-shadow: 0 4px 12px -4px rgba(0,46,109,0.15); }
+  .r-card-head {
+    padding: 10px 12px;
+    background: linear-gradient(180deg, #F8FAFC 0%, #FFF 100%);
+    border-bottom: 1px solid var(--g-border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  .r-card-id {
+    background: var(--g-primary);
+    color: #fff;
+    font-weight: 700;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+  }
+  .r-card-body { padding: 10px 12px; display: flex; flex-direction: column; gap: 8px; }
+  .r-card-risk { font-size: 13px; font-weight: 600; color: var(--g-text); line-height: 1.35; }
+  .r-card-risk:first-letter { text-transform: uppercase; }
+  .r-card-row {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    gap: 8px;
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .r-card-row dt {
+    font-size: 9px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--g-text-mute);
+    padding-top: 2px;
+  }
+  .r-card-row dd { margin: 0; color: var(--g-text-soft); }
+  .r-card-row dd:first-letter { text-transform: uppercase; }
+  .r-card-actions {
+    display: flex;
+    gap: 6px;
+    margin-top: 4px;
+    flex-wrap: wrap;
+  }
+  .r-card-actions button {
+    flex: 1;
+    min-height: 32px;
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 700;
+    border: 1px solid var(--g-border);
+    background: #fff;
+    color: var(--g-text-soft);
+    border-radius: 7px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    transition: all 0.15s;
+  }
+  .r-card-actions button:hover { background: var(--g-bg); }
+  .r-card-actions button.act-resolve { color: var(--st-resolvida); border-color: #BBF7D0; background: #F0FDF4; }
+  .r-card-actions button.act-resolve:hover { background: #DCFCE7; }
+  .r-card-actions button.act-andamento { color: var(--st-andamento); border-color: #FEF08A; background: #FEFCE8; }
+  .r-card-actions button.act-andamento:hover { background: #FEF9C3; }
+  .r-card-actions button.act-reabrir { color: var(--st-aberto); border-color: #FECACA; background: #FEF2F2; }
+  .r-card-actions button.act-reabrir:hover { background: #FEE2E2; }
+  .r-card-actions button.act-edit { color: var(--g-primary); border-color: #C7D2FE; background: #EEF2FF; }
+  .r-card-actions button.act-edit:hover { background: #E0E7FF; }
+  .r-card-expand {
+    border: 0;
+    background: var(--g-bg-soft);
+    width: 100%;
+    padding: 8px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--g-primary);
+    cursor: pointer;
+    border-top: 1px solid var(--g-border);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .r-card-details {
+    padding: 0 12px 12px;
+    display: none;
+    border-top: 1px solid var(--g-border);
+  }
+  .r-card.expanded .r-card-details { display: block; padding-top: 10px; }
+  .r-card.expanded .r-card-expand .ico-up { display: inline; }
+  .r-card.expanded .r-card-expand .ico-down { display: none; }
+  .r-card .ico-up { display: none; }
+
+  /* TABLE VIEW */
+  .table-view { display: none; overflow-x: auto; }
+  .table-view table { width: 100%; border-collapse: collapse; min-width: 1280px; }
+  .table-view thead { background: var(--g-primary); color: #fff; }
+  .table-view th {
+    padding: 12px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    text-align: left;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    white-space: nowrap;
+    cursor: pointer;
+    user-select: none;
+  }
+  .table-view th:hover { background: var(--g-primary-dark); }
+  .table-view td {
+    padding: 10px;
+    font-size: 12px;
+    border-bottom: 1px solid var(--g-border);
+    vertical-align: top;
+  }
+  .table-view tbody tr { transition: background 0.1s; }
+  .table-view tbody tr:hover { background: #FFFBEA; }
+  .table-view tbody tr.resolvida { opacity: 0.55; }
+  .table-view tbody tr.resolvida td:nth-child(3) { text-decoration: line-through; }
+  .cell-truncate {
+    max-width: 280px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.4;
+  }
+  .cell-truncate:first-letter { text-transform: uppercase; }
+
+  /* PAGINATION */
+  .pagination {
+    padding: 12px 16px;
+    background: var(--g-bg-soft);
+    border-top: 1px solid var(--g-border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  .pag-info { font-size: 11px; color: var(--g-text-soft); }
+  .pag-btns { display: flex; gap: 4px; }
+  .pag-btn {
+    padding: 6px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border: 1px solid var(--g-border);
+    background: #fff;
+    color: var(--g-text-soft);
+    border-radius: 6px;
+    cursor: pointer;
+    min-width: 32px;
+    min-height: 32px;
+    transition: all 0.15s;
+  }
+  .pag-btn:hover:not(:disabled) { background: var(--g-primary); color: #fff; border-color: var(--g-primary); }
+  .pag-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15,23,42,0.55);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    padding: 16px;
+    overflow-y: auto;
+  }
+  .modal-overlay.show { display: flex; }
+  .modal {
+    background: #fff;
+    border-radius: 14px;
+    max-width: 560px;
+    width: 100%;
+    box-shadow: 0 20px 60px -20px rgba(0,0,0,0.5);
+    overflow: hidden;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+  }
+  .modal-head {
+    padding: 16px 20px;
+    background: linear-gradient(135deg, #001F4D 0%, #002E6D 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+  .modal-head h3 {
+    font-size: 14px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .modal-head .close {
+    background: rgba(255,255,255,0.15);
+    border: 0;
+    color: #fff;
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+  }
+  .modal-body { padding: 20px; overflow-y: auto; }
+  .modal-foot {
+    padding: 14px 20px;
+    background: var(--g-bg-soft);
+    border-top: 1px solid var(--g-border);
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+  }
+  .modal-foot button {
+    padding: 9px 16px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 8px;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border: 1px solid var(--g-border);
+    background: #fff;
+    color: var(--g-text-soft);
+  }
+  .modal-foot button.primary {
+    background: var(--g-primary); color: #fff; border-color: var(--g-primary);
+  }
+  .modal-foot button.primary:hover { background: var(--g-primary-dark); }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+  .form-grid .full { grid-column: 1 / -1; }
+  .form-field label {
+    display: block;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--g-text-soft);
+    margin-bottom: 4px;
+  }
+  .hint-inline {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+    color: var(--g-text-mute);
+    font-size: 10px;
+    font-style: italic;
+  }
+  .form-field input, .form-field select, .form-field textarea {
+    width: 100%;
+    padding: 8px 10px;
+    font-size: 13px;
+    font-family: inherit;
+    border: 1px solid var(--g-border);
+    border-radius: 7px;
+    background: #fff;
+    color: var(--g-text);
+    outline: none;
+  }
+  .form-field input:focus, .form-field select:focus, .form-field textarea:focus {
+    border-color: var(--g-primary);
+    box-shadow: 0 0 0 3px rgba(0,46,109,0.12);
+  }
+  .form-field textarea { resize: vertical; min-height: 60px; }
+  .tipo-radios {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+  .tipo-radio {
+    position: relative;
+  }
+  .tipo-radio input { position: absolute; opacity: 0; pointer-events: none; }
+  .tipo-radio label {
+    display: block;
+    padding: 10px 8px;
+    border: 1.5px solid var(--g-border);
+    border-radius: 8px;
+    text-align: center;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--g-text-soft);
+    transition: all 0.15s;
+    margin: 0;
+    text-transform: none;
+    letter-spacing: 0;
+  }
+  .tipo-radio label strong { font-size: 16px; display: block; margin-bottom: 2px; }
+  .tipo-radio input:checked + label { background: var(--rad-bg); border-color: var(--rad-bd); color: var(--rad-tx); }
+  .tipo-radio.a label strong { color: var(--tipo-a); }
+  .tipo-radio.a { --rad-bg: var(--tipo-a-bg); --rad-bd: var(--tipo-a); --rad-tx: var(--tipo-a); }
+  .tipo-radio.b label strong { color: var(--tipo-b); }
+  .tipo-radio.b { --rad-bg: var(--tipo-b-bg); --rad-bd: var(--tipo-b); --rad-tx: var(--tipo-b); }
+  .tipo-radio.c label strong { color: var(--tipo-c); }
+  .tipo-radio.c { --rad-bg: var(--tipo-c-bg); --rad-bd: var(--tipo-c); --rad-tx: var(--tipo-c); }
+
+  /* TOAST */
+  .toast {
+    position: fixed;
+    top: 16px; left: 50%;
+    transform: translateX(-50%) translateY(-120%);
+    background: var(--g-primary);
+    color: #fff;
+    padding: 10px 18px;
+    font-size: 13px;
+    font-weight: 600;
+    border-radius: 999px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+    z-index: 200;
+    transition: transform 0.3s ease;
+    max-width: 90vw;
+    text-align: center;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+  .toast.success { background: var(--st-resolvida); }
+  .toast.error { background: var(--tipo-a); }
+
+  /* FOOTER */
+  footer {
+    text-align: center;
+    padding: 24px 16px 32px;
+    font-size: 11px;
+    color: var(--g-text-soft);
+    line-height: 1.6;
+  }
+  footer strong { color: var(--g-primary); }
+  .footer-powered {
+    margin-top: 18px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--g-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    opacity: 0.65;
+    transition: opacity 0.2s;
+  }
+  .footer-powered:hover { opacity: 1; }
+  .footer-powered-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--g-text-mute);
+  }
+  .footer-powered img {
+    height: 28px;
+    width: auto;
+    display: block;
+  }
+
+  /* UTILITIES */
+  .hidden { display: none !important; }
+  .fade-in { animation: fadeIn 0.3s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  ::-webkit-scrollbar { height: 8px; width: 8px; }
+  ::-webkit-scrollbar-thumb { background: var(--g-border-strong); border-radius: 4px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+  /* HELP TOOLTIP */
+  .legend-tipos {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+    font-size: 11px;
+  }
+  .legend-tipo {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    background: #fff;
+    border: 1px solid var(--g-border);
+    border-radius: 999px;
+    color: var(--g-text-soft);
+  }
+  .legend-tipo .ldot {
+    width: 10px; height: 10px; border-radius: 50%;
+  }
+  .legend-tipo strong { color: var(--g-text); font-weight: 800; margin-right: 2px; }
+  .legend-tipo.a .ldot { background: var(--tipo-a); }
+  .legend-tipo.b .ldot { background: var(--tipo-b); }
+  .legend-tipo.c .ldot { background: var(--tipo-c); }
+
+  /* SR only */
+  .sr-only {
+    position: absolute;
+    width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+  }
+</style>
+</head>
+<body>
+
+<header class="title-bar">
+  <div class="title-wrap">
+    <div class="logo-badge"><img src="data:image/png;base64,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" alt="Gerdau"></div>
+    <div class="title-txt">
+      <div class="title-eyebrow">Gerdau · Projeto Itabiritos</div>
+      <h1 class="title-main">Painel de Restrições</h1>
+      <div class="title-sub">Gestão Diária de Acompanhamento</div>
+    </div>
+    <div class="live-badge">
+      <span class="badge-label">Última atualização</span>
+      <span class="badge-value" id="last-update">—</span>
+    </div>
+  </div>
+</header>
+
+<div class="toolbar">
+  <div class="toolbar-wrap">
+    <button class="tb-btn primary" id="btn-add">+ Nova Restrição</button>
+    <button class="tb-btn" id="btn-import">📥 Importar Base</button>
+    <button class="tb-btn accent" id="btn-export">📤 Exportar Atualizado</button>
+    <button class="tb-btn" id="btn-reset" title="Descartar mudanças e voltar à base original">↺ Resetar</button>
+    <input type="file" id="file-import" accept=".csv,.json" class="hidden">
+    <div class="tb-spacer"></div>
+    <div class="tb-status" id="local-changes-status">
+      <span class="dot"></span>
+      <span id="local-changes-text">Sem mudanças locais</span>
+    </div>
+  </div>
+</div>
+
+<div class="filter-bar">
+  <div class="filter-wrap">
+    <div class="f-group">
+      <label for="filter-site">Site</label>
+      <select id="filter-site"><option value="">Todos</option></select>
+    </div>
+    <div class="f-group">
+      <label for="filter-categoria">Categoria</label>
+      <select id="filter-categoria">
+        <option value="">Todas</option>
+        <option value="Comissionamento">Comissionamento</option>
+        <option value="Construção e Montagem">Construção e Montagem</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label for="filter-disc">Disciplina</label>
+      <select id="filter-disc"><option value="">Todas</option></select>
+    </div>
+    <div class="f-group">
+      <label for="filter-area">Área</label>
+      <select id="filter-area"><option value="">Todas</option></select>
+    </div>
+    <div class="f-group">
+      <label for="filter-tipo">Tipo</label>
+      <select id="filter-tipo">
+        <option value="">Todos</option>
+        <option value="A">A · Crítica</option>
+        <option value="B">B · Importante</option>
+        <option value="C">C · Não Impeditivo</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label for="filter-status">Status</label>
+      <select id="filter-status">
+        <option value="">Todos</option>
+        <option value="Em Aberto">Em Aberto</option>
+        <option value="Em Andamento">Em Andamento</option>
+        <option value="Resolvida">Resolvida</option>
+      </select>
+    </div>
+    <div class="f-group">
+      <label for="filter-resp">Responsável</label>
+      <select id="filter-resp"><option value="">Todos</option></select>
+    </div>
+    <div class="f-group full">
+      <label for="filter-search">Busca</label>
+      <div class="search-input-wrap">
+        <input id="filter-search" type="text" placeholder="ID, ativo, restrição, responsável...">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      </div>
+    </div>
+    <div class="f-actions">
+      <button class="btn-clear" id="btn-clear">Limpar</button>
+      <div class="result-pill"><span id="result-count">—</span>de<span id="result-total">—</span></div>
+    </div>
+  </div>
+</div>
+
+<main>
+
+  <section>
+    <div class="sec-title">
+      Visão Geral
+      <span class="sec-title-help">Use os tipos para priorizar — A bloqueia comissionamento, B permite avançar, C não é impeditivo</span>
+    </div>
+    <div class="legend-tipos">
+      <div class="legend-tipo a"><span class="ldot"></span><strong>Tipo A</strong>Crítica · impede comissionar</div>
+      <div class="legend-tipo b"><span class="ldot"></span><strong>Tipo B</strong>Importante</div>
+      <div class="legend-tipo c"><span class="ldot"></span><strong>Tipo C</strong>Não Impeditivo</div>
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card total">
+        <div class="kpi-label">Total Aberto</div>
+        <div class="kpi-value" id="kpi-total">—</div>
+        <div class="kpi-sub" id="kpi-total-sub">de — restrições · sem resolvidas</div>
+      </div>
+      <div class="kpi-card tipo-a">
+        <div class="kpi-label">Tipo A · Crítica</div>
+        <div class="kpi-value" id="kpi-a">—</div>
+        <div class="kpi-sub" id="kpi-a-sub">impedem o comissionamento</div>
+      </div>
+      <div class="kpi-card tipo-b">
+        <div class="kpi-label">Tipo B · Importante</div>
+        <div class="kpi-value" id="kpi-b">—</div>
+        <div class="kpi-sub" id="kpi-b-sub">não bloqueiam outras frentes</div>
+      </div>
+      <div class="kpi-card tipo-c">
+        <div class="kpi-label">Tipo C · Não Impeditivo</div>
+        <div class="kpi-value" id="kpi-c">—</div>
+        <div class="kpi-sub" id="kpi-c-sub">não impeditivas</div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title">Foco do Dia & Mapa de Carga</div>
+    <div class="charts-row gestao">
+      <!-- FOCO DO DIA -->
+      <div class="panel focus-panel">
+        <div class="panel-header">
+          <div class="panel-title">Foco do Dia · Linha do Tempo</div>
+          <div class="panel-sub" id="focus-sub">— restrições com prazo</div>
+        </div>
+        <div class="focus-meta" id="focus-meta">
+          <span>📌</span><span id="focus-meta-text">Carregando…</span>
+        </div>
+        <div class="focus-timeline" id="focus-timeline"></div>
+        <div class="focus-distribution" id="focus-distribution"></div>
+      </div>
+      <!-- MAPA DE CARGA -->
+      <div class="panel load-panel">
+        <div class="panel-header">
+          <div class="panel-title">Mapa de Carga · Pontos Focais</div>
+          <div class="panel-sub">restrições em aberto</div>
+        </div>
+        <div class="load-grid" id="load-grid"></div>
+        <div class="load-legend">
+          <span class="load-legend-key">Cor da célula:</span>
+          <div class="load-grad">
+            <span style="font-size:10px">menor</span>
+            <span class="load-grad-bar"></span>
+            <span style="font-size:10px">maior carga</span>
+          </div>
+          <span style="margin-left:auto;color:var(--g-text-mute);font-size:10px">★ maior carga Tipo A · clique numa célula/nome para filtrar · <span style="color:#25D366;font-weight:700">WA</span> copia mensagem</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title">Distribuição</div>
+    <div class="charts-row dist">
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Por Disciplina</div>
+          <div class="panel-sub">contagem (em aberto)</div>
+        </div>
+        <div id="chart-disc"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Por Área</div>
+          <div class="panel-sub">contagem (em aberto)</div>
+        </div>
+        <div id="chart-area"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Por Site</div>
+          <div class="panel-sub">contagem (em aberto)</div>
+        </div>
+        <div id="chart-site"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title">Por Categoria</div>
+          <div class="panel-sub">comissionamento × construção (em aberto)</div>
+        </div>
+        <div id="chart-categoria"></div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="sec-title">Tipo A em Aberto · Ação Imediata</div>
+    <div class="spotlight-grid" id="spotlight"></div>
+  </section>
+
+  <section>
+    <div class="panel list-panel">
+      <div class="list-panel-header">
+        <h3>Detalhamento</h3>
+        <div class="view-toggle">
+          <button id="v-cards" class="active">Cards</button>
+          <button id="v-table">Tabela</button>
+        </div>
+      </div>
+      <div class="cards-view" id="cards-view"></div>
+      <div class="table-view" id="table-view">
+        <table>
+          <thead>
+            <tr>
+              <th data-key="id">ID</th>
+              <th data-key="tipo">Tipo</th>
+              <th data-key="status">Status</th>
+              <th data-key="area">Área</th>
+              <th data-key="ativo">Ativo</th>
+              <th data-key="disciplina">Disciplina</th>
+              <th data-key="causa">Restrição</th>
+              <th data-key="prazo" title="Prazo originalmente acordado — não muda">Prazo Inicial</th>
+              <th data-key="prazo_reagendado" title="Novo prazo após reprogramação">Prazo Reagendado</th>
+              <th data-key="n_reprogramacoes" title="Nº de reprogramações do prazo">Reprog.</th>
+              <th data-key="responsavel">Resp.</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"></tbody>
+        </table>
+      </div>
+      <div class="pagination">
+        <div class="pag-info">Página <span id="pg-current">1</span> de <span id="pg-total">1</span> · <span id="pg-show">0</span> registros</div>
+        <div class="pag-btns">
+          <button class="pag-btn" id="pg-first">«</button>
+          <button class="pag-btn" id="pg-prev">‹</button>
+          <button class="pag-btn" id="pg-next">›</button>
+          <button class="pag-btn" id="pg-last">»</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div><strong>Painel de Restrições Itabiritos · Gerdau</strong></div>
+    <div style="margin-top:6px">Mudanças feitas no painel ficam salvas localmente · use Exportar para enviar a base atualizada</div>
+    <div style="margin-top:8px;font-size:11px">Aplicativo atualizado por <strong>Gabriel Vieira</strong>, dúvidas acionar <a href="https://wa.me/5511915639419" target="_blank" style="color:var(--g-primary);text-decoration:none;font-weight:600">(11) 91563-9419</a> ou <a href="mailto:gabriel.vieira@alvarezandmarsal.com" style="color:var(--g-primary);text-decoration:none;font-weight:600">gabriel.vieira@alvarezandmarsal.com</a></div>
+    <div class="footer-powered">
+      <span class="footer-powered-label">Powered by</span>
+      <img src="data:image/png;base64,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" alt="Alvarez & Marsal">
+    </div>
+  </footer>
+
+</main>
+
+<!-- MODAL: Adicionar/Editar Restrição -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="modal-head">
+      <h3 id="modal-title">Nova Restrição</h3>
+      <button class="close" id="modal-close" aria-label="Fechar">×</button>
+    </div>
+    <div class="modal-body">
+      <form id="form-restricao">
+        <input type="hidden" id="f-id-original">
+        <div class="form-grid">
+          <div class="form-field full">
+            <label>Tipo de Restrição *</label>
+            <div class="tipo-radios">
+              <div class="tipo-radio a">
+                <input type="radio" name="tipo" id="ft-a" value="A">
+                <label for="ft-a"><strong>A</strong>Crítica · impede comissionar</label>
+              </div>
+              <div class="tipo-radio b">
+                <input type="radio" name="tipo" id="ft-b" value="B">
+                <label for="ft-b"><strong>B</strong>Importante</label>
+              </div>
+              <div class="tipo-radio c">
+                <input type="radio" name="tipo" id="ft-c" value="C">
+                <label for="ft-c"><strong>C</strong>Não Impeditivo</label>
+              </div>
+            </div>
+          </div>
+          <div class="form-field">
+            <label for="f-id">ID *</label>
+            <input type="text" id="f-id" required placeholder="R55">
+          </div>
+          <div class="form-field">
+            <label for="f-status">Status</label>
+            <select id="f-status">
+              <option value="Em Aberto">Em Aberto</option>
+              <option value="Em Andamento">Em Andamento</option>
+              <option value="Resolvida">Resolvida</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="f-site">Site</label>
+            <input type="text" id="f-site" list="dl-site" placeholder="Ex.: Itabiritos, UTMII" autocomplete="off">
+            <datalist id="dl-site"></datalist>
+          </div>
+          <div class="form-field">
+            <label for="f-ativo">Ativo</label>
+            <input type="text" id="f-ativo" placeholder="9.1 - RJ3">
+          </div>
+          <div class="form-field">
+            <label for="f-disciplina">Disciplina</label>
+            <select id="f-disciplina"></select>
+          </div>
+          <div class="form-field">
+            <label for="f-categoria">Categoria</label>
+            <select id="f-categoria">
+              <option value="Comissionamento">Comissionamento</option>
+              <option value="Construção e Montagem">Construção e Montagem</option>
+            </select>
+          </div>
+          <div class="form-field">
+            <label for="f-subdisciplina">Subdisciplina</label>
+            <input type="text" id="f-subdisciplina" placeholder="ex.: Bombas">
+          </div>
+          <div class="form-field">
+            <label for="f-prazo">Prazo <span class="hint-inline" id="f-prazo-hint"></span></label>
+            <input type="date" id="f-prazo">
+          </div>
+          <div class="form-field full">
+            <label for="f-causa">Restrição (descrição) *</label>
+            <textarea id="f-causa" required placeholder="O que precisa ser feito..."></textarea>
+          </div>
+          <div class="form-field full">
+            <label for="f-efeito">Risco / Efeito</label>
+            <textarea id="f-efeito" placeholder="Impacto se não for resolvida..."></textarea>
+          </div>
+          <div class="form-field">
+            <label for="f-responsavel">Ponto Focal <span class="hint-inline">— digite um nome existente ou novo</span></label>
+            <input type="text" id="f-responsavel" list="dl-resp" placeholder="Ex.: João Silva (digite livremente)" autocomplete="off">
+            <datalist id="dl-resp"></datalist>
+          </div>
+          <div class="form-field">
+            <label for="f-impeditivo">Impeditivo p/ comissionamento?</label>
+            <select id="f-impeditivo">
+              <option value="">—</option>
+              <option value="Sim">Sim</option>
+              <option value="Não">Não</option>
+            </select>
+          </div>
+          <div class="form-field full">
+            <label for="f-obs">Observações</label>
+            <textarea id="f-obs" placeholder="Comentários, dependências, links de relatórios..."></textarea>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-foot">
+      <button type="button" id="btn-cancel">Cancelar</button>
+      <button type="button" class="primary" id="btn-save">Salvar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast">—</div>
+
+<script>
+/* ======================== DADOS ======================== */
+const BASE_DATA = [{"id": "R01", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Elétrica", "subdisciplina": "Instrumentação", "categoria": "Construção e Montagem", "causa": "sistemas de sdai e hvac", "efeito": "energização, na liberação da sala elétrica e na sequência de comissionamento da área", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "fechamento pendente do porão com dependência de material WEG e da existência de protocolos CM e PC ainda pendentes", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R02", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Civil", "subdisciplina": "Alvenaria", "categoria": "Construção e Montagem", "causa": "alvenaria para fechamento do telhado e montagem de calhas", "efeito": "liberação da infraestrutura de apoio ao comissionamento", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R03", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Protocolos", "subdisciplina": "Instrumentação", "categoria": "Comissionamento", "causa": "protocolos ainda abertos de sdai", "efeito": "liberação da infraestrutura de apoio ao comissionamento", "responsavel": "Daniel Lanza", "status": "Resolvida", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R04", "site": "UTMII", "ativo": "9.1 - RG5", "disciplina": "Civil", "subdisciplina": "Bases", "categoria": "Construção e Montagem", "causa": "execução de 8 bases civis", "efeito": "disponibilidade do sistema de reagentes e na liberação da flotação", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R05", "site": "UTMII", "ativo": "9.1 - RG5", "disciplina": "Civil", "subdisciplina": "Pintura", "categoria": "Construção e Montagem", "causa": "execução de pintura dos tanques", "efeito": "disponibilidade do sistema de reagentes e na liberação da flotação", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R06", "site": "UTMII", "ativo": "9.1 - RG5", "disciplina": "Tubulação", "subdisciplina": "Instrumentação", "categoria": "Construção e Montagem", "causa": "ligação dos agitadores e da montagem da tubulação para flotação", "efeito": "disponibilidade do sistema de reagentes e na liberação da flotação", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R07", "site": "UTMII", "ativo": "9.1 - AX1", "disciplina": "Mecânica", "subdisciplina": "Metálica", "categoria": "Construção e Montagem", "causa": "pendência da base de sustentação da tubulação de 46 polegadas", "efeito": "disponibilidade de utilidades e no comissionamento integrado da área", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R08", "site": "UTMII", "ativo": "9.1 - AX1", "disciplina": "Tubulação", "subdisciplina": "Instrumentação", "categoria": "Construção e Montagem", "causa": "alinhamento final das bombas, da montagem do medidor de vazão e do acoplamento da tubulação de recalque", "efeito": "disponibilidade de utilidades e no comissionamento integrado da área", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R09", "site": "UTMII", "ativo": "9.1 - RJ2", "disciplina": "Mecânica", "subdisciplina": "Instrumentação", "categoria": "Construção e Montagem", "causa": "montagem dos agitadores dos silos de cal, revestimento de borracha e falta de flanges de 44 polegadas para interligação", "efeito": "conclusão da montagem, na execução dos protocolos e na partida do sistema", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R10", "site": "UTMII", "ativo": "9.1 - RJ2", "disciplina": "Elétrica", "subdisciplina": "Agitadores", "categoria": "Construção e Montagem", "causa": "montagem das ligações elétricas dos agitadores", "efeito": "conclusão da montagem, na execução dos protocolos e na partida do sistema", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R11", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Tubulação", "subdisciplina": "Utilidades", "categoria": "Construção e Montagem", "causa": "pendência da conclusão das tubulações de água, lama e ar", "efeito": "liberação do tanque, no sequenciamento dos testes e na disponibilidade do sistema de rejeitos", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R12", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Mecânica", "subdisciplina": "Tanque", "categoria": "Comissionamento", "causa": "teste de estanqueidade, do revestimento de borracha, da montagem do agitador", "efeito": "liberação do tanque, no sequenciamento dos testes e na disponibilidade do sistema de rejeitos", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R13", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Civil", "subdisciplina": "Bombas", "categoria": "Construção e Montagem", "causa": "montagem de 3 bases civis", "efeito": "transferência de fluidos e na prontidão operacional da área", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R14", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Bombas", "categoria": "Construção e Montagem", "causa": "ligações elétricas", "efeito": "transferência de fluidos e na prontidão operacional da área", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R15", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Bombas", "categoria": "Construção e Montagem", "causa": "montagem das ligações elétricas da bombas", "efeito": "transferência de fluidos e na prontidão operacional da área", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R16", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Tubulação", "subdisciplina": "Bombas", "categoria": "Construção e Montagem", "causa": "montagem da tubulação de ligação as bombas", "efeito": "transferência de fluidos e na prontidão operacional da área", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R17", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Mecânica", "subdisciplina": "Unidade Hidráulica", "categoria": "Construção e Montagem", "causa": "infraestrutura elétrica da unidade hidráulica e da torre de resfriamento", "efeito": "realização dos protocolos e na disponibilidade do sistema para testes", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R18", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Unidade Hidráulica", "categoria": "Construção e Montagem", "causa": "lançamento e ligação elétrica da unidade hidráulica e da torre de resfriamento", "efeito": "realização dos protocolos e na disponibilidade do sistema para testes", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R19", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Tubulação", "subdisciplina": "Unidade Hidráulica", "categoria": "Construção e Montagem", "causa": "infra montagem das tubulações hidráulicas da unidade hidráulica e da torre de resfriamento", "efeito": "realização dos protocolos e na disponibilidade do sistema para testes", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R20", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Mecânica", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "montagem de válvulas de segurança e diafragma", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R21", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "montagem de ligações elétricas", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R22", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Tubulação", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "montagem de  tubulação de rejeito", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R23", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Suprimentos", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "pedido de compra para válvulas de retenção", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Danilo Ponciano", "status": "Resolvida", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R24", "site": "UTMII", "ativo": "Geral", "disciplina": "Elétrica", "subdisciplina": "Material", "categoria": "Construção e Montagem", "causa": "lançamento de cabos epo 44k", "efeito": "energização e no comissionamento dos equipamentos metso, podendo comprometer o cronograma de partida da área", "responsavel": "Graziela Peixoto", "status": "Resolvida", "obs": "não previsto no contrato original, pendente de aprovação e aditivo contratual", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R25", "site": "UTMII", "ativo": "Geral", "disciplina": "Civil", "subdisciplina": "Material", "categoria": "Construção e Montagem", "causa": "material de andaime em processo de revisão de engenharia para adequação à nr-12", "efeito": "paralisação de serviços em altura, impacto no cronograma de montagem e potencial autuação por não conformidade normativa", "responsavel": "Graziela Peixoto", "status": "Em Aberto", "obs": "Pendente de liberação e aprovação técnica", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R26", "site": "UTMII", "ativo": "Geral", "disciplina": "Suprimentos", "subdisciplina": "Material", "categoria": "Construção e Montagem", "causa": "fornecimento do material de fita auto adesiva", "efeito": "proteção de equipamentos e tubulações, podendo atrasar a conclusão de montagens e a liberação para comissionamento", "responsavel": "Graziela Peixoto", "status": "Em Aberto", "obs": "Sem previsão confirmada de entrega", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "C", "tipo_inferido": false, "categoria_inferida": true, "impeditivo": ""}, {"id": "R27", "site": "UTMII", "ativo": "Geral", "disciplina": "Civil", "subdisciplina": "Material", "categoria": "Construção e Montagem", "causa": "fornecimento e instalação do galpão lonado da britagem secundária", "efeito": "proteção dos equipamentos e das operações da britagem secundária, podendo atrasar o início do comissionamento da área", "responsavel": "Graziela Peixoto", "status": "Em Aberto", "obs": "Sem entrega confirmada pelo fornecedor", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "C", "tipo_inferido": false, "categoria_inferida": true, "impeditivo": ""}, {"id": "R28", "site": "UTMII", "ativo": "9.1 - RJ1", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "fornecimento do equipamento bomba de drenagem bu-rj1-102", "efeito": "drenagem e na disponibilidade do sistema de rejeitos rj1, comprometendo o sequenciamento de testes e o comissionamento da área", "responsavel": "Danilo Ponciano", "status": "Resolvida", "obs": "Com pedido de compra ainda em aberto", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R29", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Inversores", "categoria": "Comissionamento", "causa": "verificações de interligações e testes no inversor da bomba bp-rj3-248 (weg)", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-24", "prazo_reagendado": "2026-04-27", "n_reprogramacoes": 1, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R30", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Cabeamento", "categoria": "Construção e Montagem", "causa": "interligação de cabos bombeamento de rejeito uc-bp-rj3-248", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R31", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Infraestrutura", "categoria": "Construção e Montagem", "causa": "montagem de infraestruturas de instrumentação no bombeamento de rejeito", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R32", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Elétrica", "subdisciplina": "Interligação", "categoria": "Construção e Montagem", "causa": "interligações na rm-se4-204-0001", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R33", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Testes", "categoria": "Comissionamento", "causa": "testes de ponto a ponto bp-rj3-248", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R34", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Cabeamento", "categoria": "Construção e Montagem", "causa": "lançamento, organização e amarração de cabos para o bombeamento de concentrado", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R35", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Elétrica", "subdisciplina": "Cabeamento", "categoria": "Construção e Montagem", "causa": "lançamento e organização de cabos do cablerack bombeamento de rejeito para uc-bp-rj3-250", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-24", "prazo_reagendado": "2026-04-27", "n_reprogramacoes": 1, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R36", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Elétrica", "subdisciplina": "Inversores", "categoria": "Construção e Montagem", "causa": "instalação de proteção passiva nos inversores de média do se-204", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-24", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R37", "site": "UTMII", "ativo": "7.2 - FG2", "disciplina": "Elétrica", "subdisciplina": "Infraestrutura", "categoria": "Construção e Montagem", "causa": "montagem de infraestruturas elétricas no tq-fg2-219", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R38", "site": "UTMII", "ativo": "7.2 - FG2", "disciplina": "Elétrica", "subdisciplina": "Testes", "categoria": "Comissionamento", "causa": "testes ponto a ponto na bp-fg2-243b", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R39", "site": "UTMII", "ativo": "7.2 - FG2", "disciplina": "Elétrica", "subdisciplina": "Testes", "categoria": "Comissionamento", "causa": "testes de liga e desliga e emergência das botoeiras até o relé, bu-fg2-228a e b", "efeito": "impacto no caminho crítico de comissionamento elétrico da área 9", "responsavel": "Rafael Camilo", "status": "Resolvida", "obs": "Relatório de Fiscalização elétrica área 9 · 23/04/2026", "prazo": "2026-04-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R40", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Suprimentos", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "fornecimento de tubulação", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Danilo Ponciano", "status": "Em Aberto", "obs": "30 dias entrega", "prazo": "2026-05-24", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R41", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Suprimentos", "subdisciplina": "Bombeamento de Rejeito", "categoria": "Construção e Montagem", "causa": "pedido de compra para válvulas de retenção", "efeito": "impacto no caminho de comissionamento da área e na data de conclusão do sistema", "responsavel": "Danilo Ponciano", "status": "Em Aberto", "obs": "Não impeditivo para comissionamento, dias de entrega", "prazo": "2026-06-23", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "C", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": "Não"}, {"id": "R42", "site": "UTMII", "ativo": "9.1 - RJ5", "disciplina": "Elétrica", "subdisciplina": "Comissionamento", "categoria": "Comissionamento", "causa": "BD-RG5-214 e 216- Sentido de giro (CCL)", "efeito": "", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": "2026-04-28", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R43", "site": "UTMII", "ativo": "9.1 - RJ5", "disciplina": "Elétrica", "subdisciplina": "Comissionamento", "categoria": "Comissionamento", "causa": "teste do motor elétrico bu-rj3-270 a e b", "efeito": "", "responsavel": "Rafael Camilo", "status": "Em Aberto", "obs": "", "prazo": "2026-04-29", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R44", "site": "UTMII", "ativo": "9.1 - RJ1", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos motores espessadores de rejeito (rj1-203-m01/m02/m03)", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-04-30", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R45", "site": "UTMII", "ativo": "7.2 - FG2", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos motores bomba de polpa centrífuga para filtragem de concentrado", "efeito": "", "responsavel": "Ivan Carvalho", "status": "Em Aberto", "obs": "", "prazo": "2026-04-30", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R46", "site": "UTMII", "ativo": "7.2 - FT2", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "motores de espessador de adensamento (ft2-201-m01/m02/m03)", "efeito": "", "responsavel": "Ivan Carvalho", "status": "Em Aberto", "obs": "", "prazo": "2026-05-04", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R47", "site": "UTMII", "ativo": "9.1 - RG6", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos motores compressores (cp-rg6-208 a e b)", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-05-04", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R48", "site": "UTMII", "ativo": "9.1 - RG6", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos secadores (SC-RG6-208 a e b)", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-05-04", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R49", "site": "UTMII", "ativo": "9.1 - RJ", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos motores dos espessador de lamas (EP-RJ-101-M01/M02/M03)", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-05-01", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R50", "site": "UTMII", "ativo": "8.2 FT1", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem dos motores e celula de flotação (TK-FT1-201/202/203m)", "efeito": "", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "", "prazo": "2026-05-01", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R51", "site": "UTMII", "ativo": "9.1 - RJ", "disciplina": "Mecânica", "subdisciplina": "Comissionamento", "categoria": "Comissionamento", "causa": "conferir sequencia de comissionamento de espessadores", "efeito": "", "responsavel": "Thiago Guedes", "status": "Em Aberto", "obs": "Pendende para execução da construcap", "prazo": "2026-04-27", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R52", "site": "UTMII", "ativo": "9.1 - RJ3", "disciplina": "Mecânica", "subdisciplina": "Equipamento", "categoria": "Construção e Montagem", "causa": "montagem do motor elétrico (BU-RJ3-271 a e b)", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-05-01", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R53", "site": "UTMII", "ativo": "9.1 - AX1", "disciplina": "Mecânica", "subdisciplina": "Comissionamento", "categoria": "Comissionamento", "causa": "teste do flushing da tubulação de água bruta", "efeito": "", "responsavel": "Edson Bittar", "status": "Em Aberto", "obs": "", "prazo": "2026-04-29", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R54", "site": "UTMII", "ativo": "7.1 - MO1", "disciplina": "Suprimentos", "subdisciplina": "Material", "categoria": "Construção e Montagem", "causa": "pendencia de instrumentação de vazão de recalque (fit-bu-mo1-226)", "efeito": "", "responsavel": "Graziela Peixoto", "status": "Em Aberto", "obs": "", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": true, "categoria_inferida": true, "impeditivo": ""}, {"id": "R55", "site": "UTMII", "ativo": "7.2 - FG2", "disciplina": "Mecânica", "subdisciplina": "", "categoria": "Construção e Montagem", "causa": "Fornecimento da mangueira para água de selagem", "efeito": "", "responsavel": "Ivan Carvalho", "status": "Em Aberto", "obs": "", "prazo": "2026-04-28", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R56", "site": "UTMII", "ativo": "9.1 - SE204", "disciplina": "Elétrica", "subdisciplina": "Inversores", "categoria": "Construção e Montagem", "causa": "Instalação de proteção passiva nos inversores de média do SE-SE4-204", "efeito": "", "responsavel": "Rafael Camilo", "status": "Em Andamento", "obs": "", "prazo": "2026-04-28", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R57", "site": "UTMII", "ativo": "9.1 - AX1", "disciplina": "Mecânica", "subdisciplina": "Tubos de Selagem", "categoria": "Construção e Montagem", "causa": "Flushing da linha da água de selagem(BU-AX1-220A)", "efeito": "Liberação do comissionamento do AX1", "responsavel": "Edson Bittar", "status": "Em Andamento", "obs": "", "prazo": "2026-04-28", "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R58", "site": "UTMII", "ativo": "7.1 - MO1", "disciplina": "Instrumentação", "subdisciplina": "Proteção", "categoria": "Comissionamento", "causa": "Temperatura da proteção da coroa TIT-201D não está em funcionamento; equipe da Construcap sem acesso ao instrumento para verificação", "efeito": "impedimento ao comissionamento do moinho e risco de operação sem proteção de temperatura da coroa", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Criar condição de acesso para inspeção e verificação do instrumento TIT-201D", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R59", "site": "UTMII", "ativo": "7.1 - MO1", "disciplina": "Instrumentação", "subdisciplina": "Transmissor de Temperatura", "categoria": "Construção e Montagem", "causa": "Redutor do motor principal 1 sem transmissor de temperatura TIT-UL-MO1-207A; dado da variável indisponível", "efeito": "impossibilidade de obtenção de dados de temperatura do redutor e impedimento à sequência dos próximos testes", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Solicitar instalação do transmissor de temperatura TIT-UL-MO1-207A", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R60", "site": "UTMII", "ativo": "7.1 - MO1", "disciplina": "Mecânica", "subdisciplina": "Sensor de Giro Lento", "categoria": "Construção e Montagem", "causa": "Suporte do sensor de giro lento acoplado e desacoplado não instalado", "efeito": "impedimento à instalação e ao funcionamento do sistema de proteção de giro lento do moinho", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Providenciar a instalação do suporte do sensor de giro lento acoplado e desacoplado", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R61", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Tubulação", "subdisciplina": "Trocador de Calor", "categoria": "Construção e Montagem", "causa": "Vazamento na tubulação de entrada do trocador de calor da UL-MO2-216", "efeito": "comprometimento do sistema de lubrificação e risco de danos ao equipamento durante o comissionamento", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Atuar no vazamento da tubulação de entrada do trocador de calor da UL-MO2-216", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R62", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Tubulação", "subdisciplina": "Sistema de Spray", "categoria": "Construção e Montagem", "causa": "Vazamento na tubulação do spray da UL-MO2-214", "efeito": "comprometimento do sistema de lubrificação dos mancais e risco de danos ao equipamento", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Sanar vazamento da tubulação do spray da UL-MO2-214", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R63", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Elétrica", "subdisciplina": "Aterramento", "categoria": "Construção e Montagem", "causa": "Cabo de terra do skid da unidade hidráulica UL-MO-216 não interligado", "efeito": "risco de segurança elétrica e não conformidade para liberação do comissionamento", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Interligar o cabo de terra do skid da unidade hidráulica UL-MO-216", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R64", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Tubulação", "subdisciplina": "Lubrificação", "categoria": "Construção e Montagem", "causa": "Vazamento na tubulação de graxa da UL-MO2-217", "efeito": "risco de contaminação e falha no sistema de lubrificação do moinho por perda de fluido", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Sanar vazamento da tubulação de graxa da UL-MO2-217", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R65", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Tubulação", "subdisciplina": "Lubrificação", "categoria": "Construção e Montagem", "causa": "Vazamentos na tubulação da UL-MO2-212 referente ao pinhão", "efeito": "risco de danos ao pinhão por insuficiência de lubrificação durante a operação", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Sanar vazamentos da tubulação da UL-MO2-212 referente ao pinhão", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R66", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Instrumentação", "subdisciplina": "Chave de Nível", "categoria": "Construção e Montagem", "causa": "Chave de nível LSL-UL-MO2-214 não instalada; instrumento de monitoramento de nível de graxa no tambor", "efeito": "impossibilidade de monitorar o nível de graxa no tambor, impedindo operação segura e obtenção de protocolos", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Providenciar a instalação da chave de nível LSL-UL-MO2-214", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R67", "site": "UTMII", "ativo": "7.1 - MO2", "disciplina": "Instrumentação", "subdisciplina": "Chave de Nível", "categoria": "Construção e Montagem", "causa": "Chave de nível LSL-UL-MO2-217 não instalada; instrumento de monitoramento de nível de graxa no tambor", "efeito": "impossibilidade de monitorar o nível de graxa no tambor, impedindo operação segura e obtenção de protocolos", "responsavel": "Fernando Cipriano", "status": "Em Aberto", "obs": "Providenciar a instalação da chave de nível LSL-UL-MO2-217", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R68", "site": "UTMII", "ativo": "DL", "disciplina": "Tubulação", "subdisciplina": "Ar de Serviço", "categoria": "Construção e Montagem", "causa": "Instrumentos faltantes do sistema de distribuição de ar de serviço da deslamagem não levantados", "efeito": "impedimento ao avanço do comissionamento por ausência de mapeamento dos instrumentos pendentes", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Levantar TAG dos instrumentos faltantes da deslamagem", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R69", "site": "UTMII", "ativo": "DL", "disciplina": "Tubulação", "subdisciplina": "Água de Selagem", "categoria": "Construção e Montagem", "causa": "Fechamento de tubos do sistema de distribuição de água de selagem pendente", "efeito": "impossibilidade de pressurizar e testar o sistema de selagem, impedindo o comissionamento das bombas", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Levantar e concluir o fechamento de tubos do sistema de distribuição de água de selagem", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R70", "site": "UTMII", "ativo": "DL", "disciplina": "Tubulação", "subdisciplina": "Água de Selagem", "categoria": "Construção e Montagem", "causa": "Suportes pendentes do sistema de distribuição de água de selagem", "efeito": "risco de esforços mecânicos indevidos na tubulação de selagem e comprometimento da integridade do sistema", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Levantar e concluir os suportes pendentes do sistema de distribuição de água de selagem", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R71", "site": "UTMII", "ativo": "DL", "disciplina": "Civil", "subdisciplina": "Água de Selagem", "categoria": "Construção e Montagem", "causa": "Preparação civil da canaleta do sistema de água de selagem pendente", "efeito": "acúmulo de fluido e risco de interferência com operação e segurança da área, dependência da Construcap", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Cobrar a preparação civil da canaleta pela Construcap", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R72", "site": "UTMII", "ativo": "DL", "disciplina": "Elétrica", "subdisciplina": "Bombas", "categoria": "Comissionamento", "causa": "Teste das bombas do sistema de distribuição de água de selagem pendente; sentido de giro BP-DL-205-M a verificar e ajuste dos motores 203/204/205 a alinhar com WEG", "efeito": "impedimento ao comissionamento do sistema de selagem e risco de danos por operação em sentido incorreto", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Verificar sentido de giro da BP-DL-205-M com Juliano; alinhar ajuste/teste dos motores 203, 204 e 205 com a WEG", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R73", "site": "UTMII", "ativo": "DL", "disciplina": "Tubulação", "subdisciplina": "Terceira Ciclonagem", "categoria": "Construção e Montagem", "causa": "Necessidade de escape na tubulação de 14\" para flotação 205 na terceira ciclonagem", "efeito": "impossibilidade de interligação do sistema de ciclonagem com a flotação 205, impactando o sequenciamento do comissionamento", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Providenciar escape na tubulação de 14\" para flotação 205", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}, {"id": "R74", "site": "UTMII", "ativo": "DL", "disciplina": "Instrumentação", "subdisciplina": "Ciclonagem Moagem Primária", "categoria": "Comissionamento", "causa": "Vínculo da TAG incorreto na ciclonagem da moagem primária; TAG correta pertence à moagem", "efeito": "erro de rastreabilidade de instrumentos que pode gerar falha em testes de malha e no SDCD, comprometendo a aprovação de protocolos", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Corrigir o vínculo da TAG para a moagem", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "B", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": ""}, {"id": "R75", "site": "UTMII", "ativo": "DL", "disciplina": "Instrumentação", "subdisciplina": "Ciclonagem Moagem Primária", "categoria": "Comissionamento", "causa": "Quadros da ciclonagem da moagem primária reprovados por não estarem montados na área", "efeito": "impedimento à emissão e aprovação dos protocolos de instrumentação, bloqueando o avanço do comissionamento da área", "responsavel": "Gláucio Lima", "status": "Em Aberto", "obs": "Regularizar montagem dos quadros na área e solicitar nova verificação/aprovação", "prazo": null, "prazo_reagendado": null, "n_reprogramacoes": 0, "tipo": "A", "tipo_inferido": false, "categoria_inferida": false, "impeditivo": "Sim"}];
+
+const STORAGE_KEY = 'utmii-restricoes-v5';
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+    // Migração leve: tentar puxar dados de versões anteriores
+    const rawV3 = localStorage.getItem('utmii-restricoes-v3');
+    if (rawV3) return JSON.parse(rawV3);
+    const rawV2 = localStorage.getItem('utmii-restricoes-v2');
+    if (rawV2) return JSON.parse(rawV2);
+  } catch(e) { console.warn('localStorage indisponível', e); }
+  return null;
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify({
+      data: DATA,
+      updated: new Date().toISOString()
+    }));
+    refreshChangesIndicator();
+  } catch(e) { console.warn('localStorage indisponível', e); }
+}
+
+// Garante que registros legados (sem site/categoria/n_reprogramacoes) continuem funcionando
+function sanitizeRecord(r) {
+  if (!r.site) r.site = 'Itabiritos';
+  if (!r.categoria) {
+    r.categoria = inferCategoriaSafe(r);
+    r.categoria_inferida = true;
+  }
+  if (typeof r.categoria_inferida === 'undefined') r.categoria_inferida = false;
+  if (typeof r.n_reprogramacoes !== 'number') {
+    // Inferir a partir do prazo_reagendado (1 reprogramação se existir e diferir do original)
+    r.n_reprogramacoes = (r.prazo_reagendado && r.prazo && r.prazo_reagendado !== r.prazo) ? 1 : 0;
+  }
+  return r;
+}
+
+// Versão do inferCategoria utilizada antes da declaração principal — evita ReferenceError no carregamento inicial
+function inferCategoriaSafe(r) {
+  const sub = (r.subdisciplina||'').toLowerCase();
+  const causa = (r.causa||'').toLowerCase();
+  if (sub.indexOf('comission') >= 0 || causa.indexOf('comission') >= 0) return 'Comissionamento';
+  if (causa.indexOf('protocolo') >= 0 || causa.indexOf('flushing') >= 0 || causa.indexOf('partida') >= 0) return 'Comissionamento';
+  if (/\bteste[s]?\b/.test(causa)) return 'Comissionamento';
+  return 'Construção e Montagem';
+}
+
+let DATA = (() => {
+  const saved = loadState();
+  let arr;
+  if (saved && saved.data && Array.isArray(saved.data)) arr = saved.data;
+  else arr = JSON.parse(JSON.stringify(BASE_DATA));
+  arr.forEach(sanitizeRecord);
+  return arr;
+})();
+
+/* ======================== CONFIG ======================== */
+const TIPO_INFO = {
+  'A': { label: 'A · Crítica', short: 'A', color: '#B91C1C', bg: '#FEE2E2', soft: '#FEF2F2', cls: 'tipo-a',
+         desc: 'impede o comissionamento — prioridade máxima' },
+  'B': { label: 'B · Importante', short: 'B', color: '#EA580C', bg: '#FFEDD5', soft: '#FFF7ED', cls: 'tipo-b',
+         desc: 'não bloqueia outras frentes' },
+  'C': { label: 'C · Não Impeditivo', short: 'C', color: '#16A34A', bg: '#DCFCE7', soft: '#F0FDF4', cls: 'tipo-c',
+         desc: 'não é impeditivo para o funcionamento da planta' }
+};
+const TIPOS = ['A','B','C'];
+
+const STATUS_CLS = {
+  'Em Aberto': 'status-aberto',
+  'Em Andamento': 'status-andamento',
+  'Resolvida': 'status-resolvida'
+};
+
+const state = {
+  site: '', categoria: '', disc: '', area: '', ativo: '', tipo: '', status: '', resp: '', search: '',
+  sortKey: 'tipo', sortDir: 'asc',
+  page: 1, pageSize: 10,
+  view: 'cards',
+  focusBucket: null,
+  focusBucketKey: null,
+  excludeResolvedFromKPI: true
+};
+
+/* ======================== HELPERS ======================== */
+const $ = id => document.getElementById(id);
+function esc(s) {
+  return (s==null?'':String(s))
+    .replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;')
+    .replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}
+function normStr(s){ return (s||'').toString().normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase(); }
+function capFirst(s) {
+  if (!s) return '';
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+function todayISO() {
+  const d = new Date();
+  d.setHours(0,0,0,0);
+  return d.toISOString().slice(0,10);
+}
+function parseDate(v) {
+  if (!v || v === 'NaT' || v === 'None') return null;
+  const s = String(v).replace(' ', 'T').slice(0,10);
+  const d = new Date(s + 'T00:00:00');
+  return isNaN(d) ? null : d;
+}
+function fmtPrazo(v) {
+  // Aceita string ISO, string BR, ou objeto Date
+  let d;
+  if (v instanceof Date) {
+    d = isNaN(v) ? null : v;
+  } else {
+    d = parseDate(v);
+  }
+  if (!d) return '';
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  return d.getDate().toString().padStart(2,'0') + ' ' + months[d.getMonth()];
+}
+function diffDays(d) {
+  if (!d) return null;
+  const today = new Date(); today.setHours(0,0,0,0);
+  return Math.round((d - today) / 86400000);
+}
+function effectivePrazo(r) {
+  return parseDate(r.prazo_reagendado) || parseDate(r.prazo);
+}
+
+function getArea(ativo) {
+  // Deriva área do ativo. Ex: "9.1 - RJ3" → "9.1", "8.2 FT1" → "8.2", "Geral" → "Geral"
+  if (!ativo) return '—';
+  const s = String(ativo).trim();
+  if (s.includes(' - ')) return s.split(' - ')[0].trim();
+  // Padrão "8.2 FT1" sem traço — pegar tokens numéricos com ponto
+  const m = s.match(/^(\d+(?:\.\d+)?)\s/);
+  if (m) return m[1];
+  return s;
+}
+function getAtivoName(ativo) {
+  // Retorna apenas o nome do ativo, sem a área. Ex: "9.1 - RJ3" → "RJ3", "8.2 FT1" → "FT1", "Geral" → "—"
+  if (!ativo) return '—';
+  const s = String(ativo).trim();
+  if (!s) return '—';
+  if (s.includes(' - ')) {
+    const parts = s.split(' - ');
+    const tail = parts.slice(1).join(' - ').trim();
+    return tail || '—';
+  }
+  // Padrão "8.2 FT1" — remover prefixo numérico
+  const m = s.match(/^(\d+(?:\.\d+)?)\s+(.+)$/);
+  if (m) return m[2].trim();
+  // Sem padrão de área (ex: "Geral") — não há ativo específico
+  return '—';
+}
+
+function showToast(msg, type='') {
+  const t = $('toast');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(showToast._t);
+  showToast._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function refreshChangesIndicator() {
+  const saved = loadState();
+  const baseStr = JSON.stringify(BASE_DATA);
+  const curStr = JSON.stringify(DATA);
+  const changed = baseStr !== curStr;
+  const el = $('local-changes-text');
+  const dot = document.querySelector('#local-changes-status .dot');
+  if (changed) {
+    let n = 0;
+    const baseById = new Map(BASE_DATA.map(r=>[r.id, r]));
+    DATA.forEach(r => {
+      const b = baseById.get(r.id);
+      if (!b || JSON.stringify(b) !== JSON.stringify(r)) n++;
+    });
+    BASE_DATA.forEach(b => { if (!DATA.find(r=>r.id===b.id)) n++; });
+    el.textContent = n + (n===1 ? ' mudança local' : ' mudanças locais');
+    dot.style.background = '#CA8A04';
+    dot.style.boxShadow = '0 0 0 3px rgba(202,138,4,0.18)';
+  } else {
+    el.textContent = 'Sem mudanças locais';
+    dot.style.background = 'var(--st-resolvida)';
+    dot.style.boxShadow = '0 0 0 3px rgba(22,163,74,0.18)';
+  }
+  if (saved && saved.updated) {
+    const d = new Date(saved.updated);
+    $('last-update').textContent = d.toLocaleDateString('pt-BR') + ' ' + d.toTimeString().slice(0,5);
+  } else {
+    const d = new Date();
+    $('last-update').textContent = d.toLocaleDateString('pt-BR') + ' ' + d.toTimeString().slice(0,5);
+  }
+}
+
+/* ======================== FILTRO/SORT ======================== */
+function applyFilters() {
+  const q = normStr(state.search).trim();
+  return DATA.filter(r => {
+    if (state.site && (r.site||'') !== state.site) return false;
+    if (state.categoria && (r.categoria||'') !== state.categoria) return false;
+    if (state.disc && r.disciplina !== state.disc) return false;
+    if (state.area && getArea(r.ativo) !== state.area) return false;
+    if (state.tipo && r.tipo !== state.tipo) return false;
+    if (state.status && r.status !== state.status) return false;
+    if (state.resp && (r.responsavel||'') !== state.resp) return false;
+    if (!q) return true;
+    const hay = normStr([r.id, r.site, r.categoria, r.disciplina, r.ativo, r.subdisciplina, r.causa, r.efeito, r.responsavel, r.status, r.obs].join(' '));
+    return hay.includes(q);
+  });
+}
+
+function applySort(items) {
+  const k = state.sortKey, dir = state.sortDir==='asc' ? 1 : -1;
+  const TIPO_ORDER = { 'A': 1, 'B': 2, 'C': 3 };
+  const STATUS_ORDER = { 'Em Aberto': 1, 'Em Andamento': 2, 'Resolvida': 3 };
+  return [...items].sort((a,b)=>{
+    if (k === 'tipo') return ((TIPO_ORDER[a.tipo]||9) - (TIPO_ORDER[b.tipo]||9)) * dir;
+    if (k === 'status') return ((STATUS_ORDER[a.status]||9) - (STATUS_ORDER[b.status]||9)) * dir;
+    if (k === 'n_reprogramacoes') return ((a.n_reprogramacoes||0) - (b.n_reprogramacoes||0)) * dir;
+    if (k === 'prazo') {
+      // Ordena pelo prazo inicial (sempre o original); itens sem prazo vão pro fim
+      const da = parseDate(a.prazo)?.getTime() ?? 9e15;
+      const db = parseDate(b.prazo)?.getTime() ?? 9e15;
+      return (da - db) * dir;
+    }
+    if (k === 'prazo_reagendado') {
+      const da = parseDate(a.prazo_reagendado)?.getTime() ?? 9e15;
+      const db = parseDate(b.prazo_reagendado)?.getTime() ?? 9e15;
+      return (da - db) * dir;
+    }
+    if (k === 'area') {
+      const va = getArea(a.ativo).toLowerCase();
+      const vb = getArea(b.ativo).toLowerCase();
+      if (va<vb) return -1*dir;
+      if (va>vb) return 1*dir;
+      return 0;
+    }
+    if (k === 'ativo') {
+      const va = getAtivoName(a.ativo).toLowerCase();
+      const vb = getAtivoName(b.ativo).toLowerCase();
+      if (va<vb) return -1*dir;
+      if (va>vb) return 1*dir;
+      return 0;
+    }
+    let va = a[k], vb = b[k];
+    va = (va||'').toString().toLowerCase();
+    vb = (vb||'').toString().toLowerCase();
+    if (va<vb) return -1*dir;
+    if (va>vb) return 1*dir;
+    return 0;
+  });
+}
+
+/* ======================== KPIs ======================== */
+function renderKPIs(items) {
+  const open = items.filter(r => r.status !== 'Resolvida');
+  const total = open.length;
+  $('kpi-total').textContent = total;
+  $('kpi-total-sub').textContent = `de ${items.length} restrições · ${items.length-total} resolvidas`;
+
+  TIPOS.forEach(t => {
+    const all = open.filter(r => r.tipo === t);
+    const inferred = all.filter(r => r.tipo_inferido).length;
+    $(`kpi-${t.toLowerCase()}`).innerHTML = `${all.length}<span class="kpi-value-detail">${inferred ? `(${inferred} a confirmar)` : ''}</span>`;
+  });
+  $('kpi-a-sub').textContent = 'impedem o comissionamento';
+  $('kpi-b-sub').textContent = 'não bloqueiam outras frentes';
+  $('kpi-c-sub').textContent = 'não impeditivas';
+}
+
+/* ======================== FOCO DO DIA ======================== */
+function renderFocus(items) {
+  // Considerar só não-resolvidas
+  const open = items.filter(r => r.status !== 'Resolvida');
+  const resolved = items.filter(r => r.status === 'Resolvida');
+  const buckets = {
+    atrasada: { label: 'Atrasadas', period: 'antes de hoje', items: [] },
+    hoje:     { label: 'Hoje',      period: 'prazo é hoje',  items: [] },
+    semana:   { label: '7 dias',    period: 'próxima semana', items: [] },
+    horizonte:{ label: 'No Horizonte', period: 'sem prazo ou >7d', items: [] },
+    concluida:{ label: 'Concluídos', period: 'status Resolvida', items: resolved },
+  };
+  open.forEach(r => {
+    const d = effectivePrazo(r);
+    const dd = d ? diffDays(d) : null;
+    if (dd === null) buckets.horizonte.items.push(r);
+    else if (dd < 0) buckets.atrasada.items.push(r);
+    else if (dd === 0) buckets.hoje.items.push(r);
+    else if (dd <= 7) buckets.semana.items.push(r);
+    else buckets.horizonte.items.push(r);
+  });
+
+  const tipoCount = list => {
+    const c = { A: 0, B: 0, C: 0 };
+    list.forEach(r => { if (c[r.tipo] !== undefined) c[r.tipo]++; });
+    return c;
+  };
+
+  const order = ['atrasada','hoje','semana','horizonte','concluida'];
+  const html = order.map(key => {
+    const b = buckets[key];
+    const c = tipoCount(b.items);
+    const types = TIPOS.map(t =>
+      `<span class="ftype ${t.toLowerCase()}"><span class="ftype-dot"></span>${t} ${c[t]}</span>`
+    ).join('');
+    return `
+      <div class="focus-zone ${key} ${state.focusBucketKey===key?'active':''}" data-bucket="${key}">
+        <div class="focus-zone-label">${esc(b.label)}</div>
+        <div class="focus-zone-period">${esc(b.period)}</div>
+        <div class="focus-zone-count">${b.items.length}</div>
+        <div class="focus-zone-types">${types}</div>
+      </div>
+    `;
+  }).join('');
+  $('focus-timeline').innerHTML = html;
+
+  // Meta: priorize Atrasadas, depois Hoje, depois 7d
+  const total = open.length;
+  $('focus-sub').textContent = `${total} restrição${total===1?'':'ões'} em aberto`;
+  let metaHTML;
+  const atrA = buckets.atrasada.items.filter(r=>r.tipo==='A').length;
+  const hojeA = buckets.hoje.items.filter(r=>r.tipo==='A').length;
+  const semA = buckets.semana.items.filter(r=>r.tipo==='A').length;
+  if (atrA > 0) {
+    metaHTML = `<strong>${atrA} restrição${atrA===1?'':'ões'} Tipo A atrasada${atrA===1?'':'s'}</strong> — ação imediata`;
+  } else if (hojeA > 0) {
+    metaHTML = `<strong>${hojeA} Tipo A com prazo hoje</strong> — focar agora`;
+  } else if (semA > 0) {
+    metaHTML = `<strong>${semA} Tipo A na próxima semana</strong> — alinhar plano`;
+  } else if (buckets.atrasada.items.length > 0) {
+    metaHTML = `<strong>${buckets.atrasada.items.length} restrição${buckets.atrasada.items.length===1?'':'ões'} atrasada${buckets.atrasada.items.length===1?'':'s'}</strong> — revisar prazos`;
+  } else {
+    metaHTML = `Sem prioridades atrasadas — bom momento para destravar Tipo B`;
+  }
+  $('focus-meta-text').innerHTML = metaHTML;
+
+  // Cliques nos zones filtram a lista de detalhamento
+  document.querySelectorAll('.focus-zone').forEach(z => {
+    z.onclick = () => {
+      const key = z.dataset.bucket;
+      const bucketItems = buckets[key].items;
+      // Toggle: clicar de novo na mesma zone limpa o filtro
+      if (state.focusBucketKey === key) {
+        state.focusBucketKey = null;
+        state.focusBucket = null;
+        state.page = 1;
+        render();
+        showToast('Filtro de foco removido');
+        return;
+      }
+      // Filtrar pelos IDs do bucket (mesmo que vazio — mostra "nenhuma restrição")
+      state.focusBucketKey = key;
+      state.focusBucket = new Set(bucketItems.map(r => r.id));
+      state.page = 1;
+      $('filter-search').value = '';
+      state.search = '';
+      render();
+      const labelMap = { atrasada: 'Atrasadas', hoje: 'Hoje', semana: 'Próximos 7 dias', horizonte: 'No horizonte' };
+      showToast(`🔎 Filtrando: ${labelMap[key] || key} (${bucketItems.length})`, 'success');
+      const target = $('cards-view') || $('table-view');
+      if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    };
+  });
+
+  // Distribuição na linha do tempo
+  renderFocusDistribution(open);
+}
+
+/* ======================== DISTRIBUIÇÃO NA LINHA DO TEMPO ======================== */
+function renderFocusDistribution(openItems) {
+  const el = $('focus-distribution');
+  if (!el) return;
+
+  const DAYS_AHEAD = 14; // Hoje + 14 dias futuros
+  const today = new Date(); today.setHours(0,0,0,0);
+
+  // Bucket "Atrasadas" — todos os itens com prazo < hoje
+  const atrasadas = { items: [], a:0, b:0, c:0 };
+  // Buckets diários: hoje até hoje+DAYS_AHEAD
+  const days = [];
+  for (let i = 0; i <= DAYS_AHEAD; i++) {
+    const d = new Date(today); d.setDate(today.getDate() + i);
+    days.push({ date: d, items: [], a:0, b:0, c:0 });
+  }
+  let semPrazo = 0;
+  let alemHorizonte = 0;
+
+  openItems.forEach(r => {
+    const d = effectivePrazo(r);
+    if (!d) { semPrazo++; return; }
+    const dd = diffDays(d);
+    if (dd < 0) {
+      atrasadas.items.push(r);
+      atrasadas[r.tipo.toLowerCase()] = (atrasadas[r.tipo.toLowerCase()] || 0) + 1;
+    } else if (dd <= DAYS_AHEAD) {
+      const slot = days[dd];
+      slot.items.push(r);
+      slot[r.tipo.toLowerCase()] = (slot[r.tipo.toLowerCase()] || 0) + 1;
+    } else {
+      alemHorizonte++;
+    }
+  });
+
+  // Escala
+  const maxCount = Math.max(
+    atrasadas.items.length,
+    ...days.map(d => d.items.length),
+    1
+  );
+
+  const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+  const dows = ['dom','seg','ter','qua','qui','sex','sáb'];
+
+  const buildCol = (bucket, opts) => {
+    const total = bucket.items.length;
+    const heightPct = total === 0 ? 0 : (total / maxCount) * 100;
+    const isEmpty = total === 0;
+    const segs = isEmpty ? '' : ['c','b','a'].map(t => {
+      const v = bucket[t] || 0;
+      if (v === 0) return '';
+      const pct = (v / total * 100).toFixed(2);
+      return `<div class="fdist-seg tipo-${t}" style="flex:${v}" title="${v} Tipo ${t.toUpperCase()}"></div>`;
+    }).join('');
+    const tipoBreak = `${bucket.a||0}A · ${bucket.b||0}B · ${bucket.c||0}C`;
+    const tipDescr = isEmpty
+      ? `${opts.title}: nenhuma restrição`
+      : `${opts.title}: ${total} restrição${total===1?'':'ões'} (${tipoBreak})`;
+    const colCls = ['fdist-col', opts.cls||'', isEmpty?'empty':''].filter(Boolean).join(' ');
+    return `
+      <div class="${colCls}" data-bucket-type="${opts.bucketType}" data-day-offset="${opts.dayOffset!=null?opts.dayOffset:''}" title="${esc(tipDescr)}">
+        <span class="fdist-count ${total===0?'zero':''}">${total === 0 ? '·' : total}</span>
+        <div class="fdist-bar" style="height:${heightPct}%">${segs}</div>
+        <span class="fdist-label">${opts.label}</span>
+        ${opts.sublabel ? `<span class="fdist-sublabel">${opts.sublabel}</span>` : ''}
+      </div>
+    `;
+  };
+
+  const colsHTML = [];
+  // Coluna Atrasadas (à esquerda)
+  if (atrasadas.items.length > 0) {
+    colsHTML.push(buildCol(atrasadas, {
+      title: 'Atrasadas (todas)',
+      label: 'Atras.',
+      sublabel: '',
+      cls: 'atrasadas',
+      bucketType: 'atrasadas',
+      dayOffset: null
+    }));
+  }
+  // Hoje + próximos N dias
+  days.forEach((day, idx) => {
+    const isToday = idx === 0;
+    const dia = day.date.getDate().toString().padStart(2,'0');
+    const mes = months[day.date.getMonth()];
+    const dow = dows[day.date.getDay()];
+    colsHTML.push(buildCol(day, {
+      title: isToday ? `Hoje (${dia} ${mes})` : `${dow.charAt(0).toUpperCase()+dow.slice(1)}, ${dia} ${mes}`,
+      label: isToday ? 'Hoje' : `${dia}/${(day.date.getMonth()+1).toString().padStart(2,'0')}`,
+      sublabel: isToday ? '' : dow,
+      cls: isToday ? 'today' : '',
+      bucketType: 'day',
+      dayOffset: idx
+    }));
+  });
+
+  // Notas no rodapé (sem prazo, além horizonte)
+  const notes = [];
+  if (semPrazo > 0) notes.push(`${semPrazo} sem prazo`);
+  if (alemHorizonte > 0) notes.push(`${alemHorizonte} além de ${DAYS_AHEAD}d`);
+  const subTxt = notes.length ? notes.join(' · ') : '—';
+
+  const totalNoChart = atrasadas.items.length + days.reduce((s,d)=>s+d.items.length, 0);
+
+  el.innerHTML = `
+    <div class="fdist-head">
+      <div>
+        <span class="fdist-title">Distribuição na linha do tempo</span>
+        <div class="fdist-sub">${totalNoChart} no recorte (atrasadas + ${DAYS_AHEAD}d) · fora: ${subTxt}</div>
+      </div>
+      <div class="fdist-legend">
+        <span class="fdist-legend-item"><span class="fdist-legend-dot" style="background:var(--tipo-a)"></span>Tipo A</span>
+        <span class="fdist-legend-item"><span class="fdist-legend-dot" style="background:var(--tipo-b)"></span>Tipo B</span>
+        <span class="fdist-legend-item"><span class="fdist-legend-dot" style="background:var(--tipo-c)"></span>Tipo C</span>
+      </div>
+    </div>
+    <div class="fdist-chart">${colsHTML.join('')}</div>
+  `;
+
+  // Cliques: filtrar a lista de detalhamento
+  el.querySelectorAll('.fdist-col:not(.empty)').forEach(col => {
+    col.addEventListener('click', () => {
+      const bt = col.dataset.bucketType;
+      let ids, label;
+      if (bt === 'atrasadas') {
+        ids = new Set(atrasadas.items.map(r => r.id));
+        label = `Atrasadas (${atrasadas.items.length})`;
+      } else {
+        const off = parseInt(col.dataset.dayOffset, 10);
+        const slot = days[off];
+        ids = new Set(slot.items.map(r => r.id));
+        const dia = slot.date.getDate().toString().padStart(2,'0');
+        const mes = months[slot.date.getMonth()];
+        label = off === 0 ? `Hoje · ${dia} ${mes} (${slot.items.length})` : `${dia} ${mes} (${slot.items.length})`;
+      }
+      if (ids.size === 0) return;
+      state.focusBucket = ids;
+      state.focusBucketKey = null;
+      state.page = 1;
+      state.search = '';
+      if ($('filter-search')) $('filter-search').value = '';
+      render();
+      showToast(`🔎 Filtrando: ${label}`, 'success');
+      const target = $('cards-view') || $('table-view');
+      if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+    });
+  });
+}
+
+/* ======================== MAPA DE CARGA ======================== */
+function renderLoadMap(items) {
+  const open = items.filter(r => r.status !== 'Resolvida');
+  const respSet = [...new Set(open.map(r => r.responsavel || '—'))];
+  // Ordenar por carga total decrescente
+  const respCount = respSet.map(r => ({
+    name: r,
+    a: open.filter(x => (x.responsavel||'—')===r && x.tipo==='A').length,
+    b: open.filter(x => (x.responsavel||'—')===r && x.tipo==='B').length,
+    c: open.filter(x => (x.responsavel||'—')===r && x.tipo==='C').length,
+  }));
+  respCount.forEach(rc => rc.total = rc.a + rc.b + rc.c);
+  respCount.sort((x,y) => y.total - x.total);
+
+  // Máx para cores
+  const maxA = Math.max(...respCount.map(r=>r.a), 1);
+  const maxB = Math.max(...respCount.map(r=>r.b), 1);
+  const maxC = Math.max(...respCount.map(r=>r.c), 1);
+  const maxTot = Math.max(...respCount.map(r=>r.total), 1);
+  const topAResp = respCount.filter(r=>r.a>0).reduce((a,b)=> b.a>a.a?b:a, {a:-1});
+
+  function cellColor(v, max, base) {
+    if (v === 0) return null;
+    const intensity = 0.18 + 0.62 * (v / max);
+    return { bg: `${base}${Math.round(intensity*255).toString(16).padStart(2,'0')}`, intensity };
+  }
+  function cellHTML(v, max, base, tipoLabel, respName, tipoLetter) {
+    if (v === 0) {
+      return `<div class="load-cell empty" title="${respName}: nenhuma ${tipoLabel} em aberto">·</div>`;
+    }
+    const intensity = 0.18 + 0.62 * (v / max);
+    const alpha = Math.round(intensity*255).toString(16).padStart(2,'0');
+    const textColor = intensity > 0.5 ? '#fff' : base;
+    return `<div class="load-cell clickable" data-resp="${respName}" data-tipo="${tipoLetter}" style="background:${base}${alpha};color:${textColor}" title="Filtrar: ${respName} · ${tipoLabel} (${v} em aberto)">${v}</div>`;
+  }
+
+  const header = `
+    <div class="load-h first">Ponto Focal</div>
+    <div class="load-h tipo-a">Tipo A</div>
+    <div class="load-h tipo-b">Tipo B</div>
+    <div class="load-h tipo-c">Tipo C</div>
+    <div class="load-h">Total</div>
+    <div class="load-h" title="Atalho WhatsApp">WA</div>
+  `;
+  const waIcon = '<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>';
+  const rows = respCount.map(rc => {
+    const isTopA = rc.a > 0 && rc === topAResp;
+    return `
+      <div class="load-name clickable" data-resp="${esc(rc.name)}" title="Filtrar todas as ${rc.total} restrições de ${esc(rc.name)}">
+        ${esc(rc.name)}${isTopA ? ' <span style="color:var(--g-accent-dark)" title="maior carga Tipo A">★</span>' : ''}
+        <small>${rc.total} aberta${rc.total===1?'':'s'}</small>
+      </div>
+      ${cellHTML(rc.a, maxA, '#B91C1C', 'Tipo A', esc(rc.name), 'A')}
+      ${cellHTML(rc.b, maxB, '#EA580C', 'Tipo B', esc(rc.name), 'B')}
+      ${cellHTML(rc.c, maxC, '#16A34A', 'Tipo C', esc(rc.name), 'C')}
+      <div class="load-total clickable ${isTopA ? 'high' : ''}" data-resp="${esc(rc.name)}" title="Filtrar todas as ${rc.total} restrições de ${esc(rc.name)}">${rc.total}</div>
+      <button class="load-wa" data-resp="${esc(rc.name)}" title="Copiar mensagem WhatsApp de ${esc(rc.name)} para a área de transferência">${waIcon}</button>
+    `;
+  }).join('');
+
+  $('load-grid').innerHTML = header + (respCount.length ? rows : '<div style="grid-column:1/-1;padding:18px;text-align:center;color:var(--g-text-soft);font-size:12px">Nenhum registro em aberto</div>');
+
+  // Cliques nas células e nomes do mapa filtram a lista de detalhamento
+  const applyMapFilter = (filterFn, label) => {
+    const ids = new Set(open.filter(filterFn).map(r => r.id));
+    if (ids.size === 0) return;
+    state.focusBucket = ids;
+    state.focusBucketKey = null;
+    state.page = 1;
+    state.search = '';
+    if ($('filter-search')) $('filter-search').value = '';
+    render();
+    showToast(`🔎 Filtrando: ${label} (${ids.size})`, 'success');
+    const target = $('cards-view') || $('table-view');
+    if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+  };
+
+  $('load-grid').querySelectorAll('.load-cell.clickable').forEach(el => {
+    el.addEventListener('click', () => {
+      const respName = el.dataset.resp;
+      const tipo = el.dataset.tipo;
+      applyMapFilter(r => (r.responsavel||'—') === respName && r.tipo === tipo, `${respName} · Tipo ${tipo}`);
+    });
+  });
+
+  $('load-grid').querySelectorAll('.load-name.clickable, .load-total.clickable').forEach(el => {
+    el.addEventListener('click', () => {
+      const respName = el.dataset.resp;
+      applyMapFilter(r => (r.responsavel||'—') === respName, `${respName} · todas em aberto`);
+    });
+  });
+
+  // Atalho WhatsApp: clique no botão verde copia mensagem formatada para a área de transferência
+  $('load-grid').querySelectorAll('.load-wa').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const respName = btn.dataset.resp;
+      const respItems = open.filter(r => (r.responsavel||'—') === respName);
+      const msg = buildWhatsAppMessage(respName, respItems);
+      try {
+        await navigator.clipboard.writeText(msg);
+        showToast(`📋 Mensagem para ${respName} copiada · cole no WhatsApp`, 'success');
+      } catch (err) {
+        // Fallback para navegadores sem suporte ao Clipboard API
+        const ta = document.createElement('textarea');
+        ta.value = msg;
+        ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta);
+        ta.select();
+        try {
+          document.execCommand('copy');
+          showToast(`📋 Mensagem para ${respName} copiada · cole no WhatsApp`, 'success');
+        } catch (e2) {
+          showToast('Erro ao copiar mensagem', 'error');
+        }
+        document.body.removeChild(ta);
+      }
+    });
+  });
+}
+
+function buildWhatsAppMessage(respName, items) {
+  const today = new Date();
+  const dataStr = today.toLocaleDateString('pt-BR', { day: '2-digit', month: 'long' });
+  const firstName = (respName||'').split(' ')[0];
+
+  const sortByPrazo = (a, b) => {
+    const da = effectivePrazo(a)?.getTime() ?? 9e15;
+    const db = effectivePrazo(b)?.getTime() ?? 9e15;
+    return da - db;
+  };
+
+  const tipoA = items.filter(r => r.tipo === 'A').sort(sortByPrazo);
+  const tipoB = items.filter(r => r.tipo === 'B').sort(sortByPrazo);
+  const tipoC = items.filter(r => r.tipo === 'C').sort(sortByPrazo);
+
+  const formatItem = (r) => {
+    const prazo = effectivePrazo(r);
+    const dd = prazo ? diffDays(prazo) : null;
+    const months = ['Jan','Fev','Mar','Abr','Mai','Jun','Jul','Ago','Set','Out','Nov','Dez'];
+    let prazoTxt = ' _(sem prazo)_';
+    if (prazo && dd !== null) {
+      const dStr = prazo.getDate().toString().padStart(2,'0') + '/' + months[prazo.getMonth()];
+      if (dd < 0) prazoTxt = ` _(${Math.abs(dd)}d atrasada · venceu ${dStr})_`;
+      else if (dd === 0) prazoTxt = ` _(vence hoje)_`;
+      else prazoTxt = ` _(vence em ${dStr})_`;
+    }
+    // Farol por status: 🔴 Em Aberto · 🟡 Em Andamento (Resolvida não entra na mensagem)
+    const farol = r.status === 'Em Andamento' ? '🟡' : '🔴';
+    const causa = (r.causa || '').trim();
+    const ativo = r.ativo ? `[${r.ativo}] ` : '';
+    return `${farol} *${r.id}* — ${ativo}${causa}${prazoTxt}`;
+  };
+
+  const lines = [];
+  lines.push(`*Restrições Itabiritos · ${dataStr}*`);
+  lines.push(firstName ? `Olá, ${firstName}! Segue o status das suas restrições em aberto:` : 'Status das restrições em aberto:');
+  lines.push('');
+
+  if (tipoA.length) {
+    lines.push(`*Tipo A · Crítica · Prioritários* (${tipoA.length})`);
+    tipoA.forEach(r => lines.push(formatItem(r)));
+    lines.push('');
+  }
+  if (tipoB.length) {
+    lines.push(`*Tipo B · Importante* (${tipoB.length})`);
+    tipoB.forEach(r => lines.push(formatItem(r)));
+    lines.push('');
+  }
+  if (tipoC.length) {
+    lines.push(`*Tipo C · Não Impeditivo* (${tipoC.length})`);
+    tipoC.forEach(r => lines.push(formatItem(r)));
+    lines.push('');
+  }
+
+  if (!tipoA.length && !tipoB.length && !tipoC.length) {
+    lines.push('Nenhuma restrição em aberto. Obrigado!');
+    lines.push('');
+  } else {
+    lines.push(`_Total em aberto: ${items.length}_`);
+    lines.push('Por favor, atualize o status no painel ou me retorne com a previsão.');
+  }
+
+  return lines.join('\n');
+}
+
+/* ======================== DISTRIBUIÇÃO ======================== */
+function renderCSSBarChart(containerId, data, dimension) {
+  const el = $(containerId);
+  if (!el) return;
+  const max = Math.max(...data.map(d => d.value), 1);
+  const clickable = !!dimension;
+  const html = data.map(d => {
+    const pct = (d.value / max * 100).toFixed(1);
+    const cls = clickable ? 'css-bar-row clickable' : 'css-bar-row';
+    const dataAttrs = clickable ? `data-dim="${dimension}" data-val="${esc(d.label)}" title="Filtrar: ${esc(d.label)} (${d.value} em aberto)"` : '';
+    return `
+      <div class="${cls}" ${dataAttrs}>
+        <div class="css-bar-label">${esc(d.label)}</div>
+        <div class="css-bar-track">
+          <div class="css-bar-fill" style="width:${pct}%; --bar-color:${d.color || '#002E6D'}">${d.value}</div>
+        </div>
+        <div class="css-bar-value">${d.value}</div>
+      </div>
+    `;
+  }).join('');
+  el.innerHTML = data.length ? `<div class="css-chart">${html}</div>` : '<div style="padding:24px;text-align:center;color:var(--g-text-soft);font-size:12px">Sem dados</div>';
+
+  if (clickable) {
+    el.querySelectorAll('.css-bar-row.clickable').forEach(row => {
+      row.addEventListener('click', () => {
+        const dim = row.dataset.dim;
+        const val = row.dataset.val;
+        const filterFn = dim === 'area'
+          ? (r => getArea(r.ativo) === val)
+          : (r => (r[dim]||'') === val);
+        const ids = new Set(DATA.filter(r => r.status !== 'Resolvida').filter(filterFn).map(r => r.id));
+        if (ids.size === 0) return;
+        state.focusBucket = ids;
+        state.focusBucketKey = null;
+        state.page = 1;
+        state.search = '';
+        if ($('filter-search')) $('filter-search').value = '';
+        render();
+        showToast(`🔎 Filtrando: ${val} (${ids.size})`, 'success');
+        const target = $('cards-view') || $('table-view');
+        if (target) target.scrollIntoView({behavior:'smooth', block:'start'});
+      });
+    });
+  }
+}
+
+function renderStackedChart(containerId, data) {
+  const el = $(containerId);
+  if (!el) return;
+  const html = data.map(d => {
+    const segs = d.segments.map(seg =>
+      `<div class="css-stack-segment" style="flex:${seg.value}; background:${seg.color}">${seg.value > 0 ? seg.value : ''}</div>`
+    ).join('');
+    return `
+      <div class="css-stack-row">
+        <div class="css-stack-label">${esc(d.label)}</div>
+        <div class="css-stack-bar">${segs}</div>
+      </div>
+    `;
+  }).join('');
+  const legend = `
+    <div class="css-stack-legend">
+      <div class="css-stack-legend-item"><span class="css-stack-legend-dot" style="background:#B91C1C"></span>Tipo A</div>
+      <div class="css-stack-legend-item"><span class="css-stack-legend-dot" style="background:#EA580C"></span>Tipo B</div>
+      <div class="css-stack-legend-item"><span class="css-stack-legend-dot" style="background:#16A34A"></span>Tipo C</div>
+    </div>
+  `;
+  el.innerHTML = data.length ? `<div class="css-stack-chart">${html}</div>${legend}` : '<div style="padding:24px;text-align:center;color:var(--g-text-soft);font-size:12px">Sem dados</div>';
+}
+
+function renderCharts(items) {
+  const open = items.filter(r => r.status !== 'Resolvida');
+  // Disciplina
+  const discMap = new Map();
+  open.forEach(r => discMap.set(r.disciplina, (discMap.get(r.disciplina)||0)+1));
+  const discData = [...discMap.entries()].sort((a,b)=>b[1]-a[1]).map(([label, value]) => ({label, value, color: '#002E6D'}));
+  renderCSSBarChart('chart-disc', discData, 'disciplina');
+
+  // Área
+  const areaMap = new Map();
+  open.forEach(r => {
+    const a = getArea(r.ativo);
+    areaMap.set(a, (areaMap.get(a)||0)+1);
+  });
+  const areaData = [...areaMap.entries()].sort((a,b)=>b[1]-a[1]).map(([label, value]) => ({label, value, color: '#FFC20E'}));
+  renderCSSBarChart('chart-area', areaData, 'area');
+
+  // Site
+  const siteMap = new Map();
+  open.forEach(r => {
+    const s = r.site || '—';
+    siteMap.set(s, (siteMap.get(s)||0)+1);
+  });
+  const siteData = [...siteMap.entries()].sort((a,b)=>b[1]-a[1]).map(([label, value]) => ({label, value, color: '#1E4A9C'}));
+  renderCSSBarChart('chart-site', siteData, 'site');
+
+  // Categoria
+  const catMap = new Map();
+  open.forEach(r => {
+    const c = r.categoria || '—';
+    catMap.set(c, (catMap.get(c)||0)+1);
+  });
+  const CAT_COLORS = {
+    'Comissionamento': '#0EA5E9',
+    'Construção e Montagem': '#7C3AED'
+  };
+  const catData = [...catMap.entries()].sort((a,b)=>b[1]-a[1]).map(([label, value]) => ({label, value, color: CAT_COLORS[label] || '#64748B'}));
+  renderCSSBarChart('chart-categoria', catData, 'categoria');
+}
+
+/* ======================== SPOTLIGHT ======================== */
+function renderSpotlight(items) {
+  const tipoA = items.filter(r => r.tipo === 'A' && r.status !== 'Resolvida');
+  // Ordenar por prazo asc (sem prazo no fim)
+  tipoA.sort((a,b) => {
+    const da = effectivePrazo(a)?.getTime() ?? 9e15;
+    const db = effectivePrazo(b)?.getTime() ?? 9e15;
+    return da - db;
+  });
+  const top = tipoA.slice(0, 6);
+  if (!top.length) {
+    $('spotlight').innerHTML = '<div style="padding:24px;text-align:center;color:var(--g-text-soft);font-size:13px;background:#fff;border-radius:10px;border:1px dashed var(--g-border-strong);grid-column:1/-1">🎉 Nenhuma restrição Tipo A em aberto</div>';
+    return;
+  }
+  $('spotlight').innerHTML = top.map(r => {
+    const d = effectivePrazo(r);
+    const dd = d ? diffDays(d) : null;
+    let prazoChip = '';
+    if (dd !== null) {
+      if (dd < 0) prazoChip = `<span class="chip status-aberto">${Math.abs(dd)}d atrasada</span>`;
+      else if (dd === 0) prazoChip = `<span class="chip status-andamento">prazo hoje</span>`;
+      else if (dd <= 7) prazoChip = `<span class="chip status-andamento">em ${dd}d</span>`;
+      else prazoChip = `<span class="chip ghost">em ${dd}d</span>`;
+    } else {
+      prazoChip = `<span class="chip ghost">sem prazo</span>`;
+    }
+    return `
+      <div class="spot-card tipo-a fade-in">
+        <div class="spot-head">
+          <span class="chip dark">${esc(r.id)}</span>
+          <span class="chip tipo-a tipo-tag">A</span>
+          ${prazoChip}
+          <span class="chip blue">${esc(r.disciplina)}</span>
+        </div>
+        <div class="spot-title">${esc(capFirst(r.causa))}</div>
+        <div class="spot-meta">
+          <span class="chip blue">${esc(r.ativo)}</span>
+          ${r.subdisciplina ? `<span class="chip blue">${esc(r.subdisciplina)}</span>` : ''}
+          <span class="chip ghost">👤 ${esc(r.responsavel||'—')}</span>
+        </div>
+        ${r.efeito ? `<div style="font-size:11px;color:var(--g-text-soft);line-height:1.4">
+          <strong style="color:var(--g-text);font-weight:700">Risco:</strong> ${esc(capFirst(r.efeito))}
+        </div>` : ''}
+      </div>
+    `;
+  }).join('');
+}
+
+/* ======================== CARDS / TABELA ======================== */
+function buildTipoChip(r) {
+  const ti = TIPO_INFO[r.tipo];
+  if (!ti) return `<span class="chip tipo-pendente tipo-tag editable" data-edit-id="${esc(r.id)}" title="Sem classificação · clique para definir">?</span>`;
+  return `<span class="chip ${ti.cls} tipo-tag editable ${r.tipo_inferido?'inferred':''}" data-edit-id="${esc(r.id)}" title="${esc(ti.label)} — ${esc(ti.desc)}${r.tipo_inferido?' · classificação inferida, confirmar':''}">${ti.short}</span>`;
+}
+
+function renderCards(pageItems) {
+  $('cards-view').innerHTML = pageItems.length ? pageItems.map(r => {
+    const ti = TIPO_INFO[r.tipo] || { cls: 'tipo-pendente' };
+    const stCls = STATUS_CLS[r.status] || 'status-aberto';
+    const d = effectivePrazo(r);
+    const dd = d ? diffDays(d) : null;
+    let prazoLabel = '—';
+    if (d) {
+      const isReagendado = r.prazo_reagendado && r.prazo && r.prazo_reagendado !== r.prazo;
+      prazoLabel = fmtPrazo(d);
+      if (isReagendado) {
+        prazoLabel += ` <span title="Prazo reagendado — original: ${fmtPrazo(parseDate(r.prazo))}" style="color:var(--tipo-b);font-size:10px;font-weight:700">↻ reagendado</span>`;
+      }
+      if (dd !== null) {
+        if (dd < 0) prazoLabel += ` <span style="color:var(--tipo-a);font-weight:700">(${Math.abs(dd)}d atrasada)</span>`;
+        else if (dd === 0) prazoLabel += ` <span style="color:var(--tipo-b);font-weight:700">(hoje)</span>`;
+        else if (dd <= 7) prazoLabel += ` <span style="color:var(--st-andamento);font-weight:700">(em ${dd}d)</span>`;
+      }
+    }
+    const nReprog = r.n_reprogramacoes || 0;
+    const reprogChip = nReprog > 0
+      ? `<span class="chip reprog-chip" title="Reprogramada ${nReprog}× — original: ${r.prazo ? fmtPrazo(parseDate(r.prazo)) : '—'}">↻ ${nReprog}× reprog.</span>`
+      : '';
+    const reprogDetail = nReprog > 0 && r.prazo
+      ? `<dl class="r-card-row" style="margin-top:6px"><dt>Reprog.</dt><dd>${nReprog}× — prazo original: <strong>${fmtPrazo(parseDate(r.prazo))}</strong></dd></dl>`
+      : '';
+    return `
+      <div class="r-card ${ti.cls} ${r.status==='Resolvida'?'resolvida':''} fade-in" data-id="${esc(r.id)}">
+        <div class="r-card-head">
+          <span class="r-card-id">${esc(r.id)}</span>
+          ${buildTipoChip(r)}
+          <span class="chip ${stCls}">${esc(r.status||'Em Aberto')}</span>
+          <span class="chip blue">${esc(r.disciplina)}</span>
+          <span class="chip ghost">${esc(r.ativo)}</span>
+          ${reprogChip}
+        </div>
+        <div class="r-card-body">
+          <div class="r-card-risk">${esc(capFirst(r.causa))}</div>
+          ${r.subdisciplina ? `<dl class="r-card-row"><dt>Subdisc.</dt><dd>${esc(r.subdisciplina)}</dd></dl>` : ''}
+          <dl class="r-card-row"><dt>Resp.</dt><dd>${esc(r.responsavel||'—')}</dd></dl>
+          <dl class="r-card-row"><dt>Prazo</dt><dd>${prazoLabel}</dd></dl>
+        </div>
+        <div class="r-card-details">
+          ${r.efeito ? `<dl class="r-card-row"><dt>Risco</dt><dd>${esc(capFirst(r.efeito))}</dd></dl>` : ''}
+          ${r.obs ? `<dl class="r-card-row" style="margin-top:6px"><dt>Obs.</dt><dd>${esc(r.obs)}</dd></dl>` : ''}
+          ${r.impeditivo ? `<dl class="r-card-row" style="margin-top:6px"><dt>Impeditivo</dt><dd>${esc(r.impeditivo)}</dd></dl>` : ''}
+          ${reprogDetail}
+          <div class="r-card-actions">
+            ${r.status !== 'Em Andamento' ? `<button class="act-andamento" data-action="andamento" data-id="${esc(r.id)}">⏳ Em andamento</button>` : ''}
+            ${r.status !== 'Resolvida' ? `<button class="act-resolve" data-action="resolve" data-id="${esc(r.id)}">✓ Resolver</button>` : `<button class="act-reabrir" data-action="reabrir" data-id="${esc(r.id)}">↺ Reabrir</button>`}
+            <button class="act-edit" data-action="edit" data-id="${esc(r.id)}">✏️ Editar</button>
+          </div>
+        </div>
+        <button class="r-card-expand" type="button">
+          <span class="ico-down">Ver detalhes & ações ▾</span>
+          <span class="ico-up">Ocultar ▴</span>
+        </button>
+      </div>
+    `;
+  }).join('') : '<div style="padding:28px;text-align:center;color:var(--g-text-soft);font-size:13px">Nenhuma restrição corresponde aos filtros aplicados.</div>';
+
+  document.querySelectorAll('.r-card-expand').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.currentTarget.closest('.r-card').classList.toggle('expanded');
+    });
+  });
+}
+
+function renderTable(pageItems) {
+  const tb = $('tbody');
+  tb.innerHTML = pageItems.length ? pageItems.map(r => {
+    const stCls = STATUS_CLS[r.status] || 'status-aberto';
+    const dInicial = parseDate(r.prazo);
+    const dReag = parseDate(r.prazo_reagendado);
+    const dEfetivo = dReag || dInicial;
+    const dd = dEfetivo ? diffDays(dEfetivo) : null;
+    const isOverdue = dd !== null && dd < 0 && r.status !== 'Resolvida';
+    const isReagendado = !!(dReag && dInicial && r.prazo_reagendado !== r.prazo);
+
+    // Coluna 1: Prazo Inicial — sempre mostra o original, sem (Xd)
+    let prazoIniLabel;
+    if (!dInicial) {
+      prazoIniLabel = '<span style="color:var(--g-text-mute)">—</span>';
+    } else if (isReagendado) {
+      // Quando há reagendamento, o inicial é histórico — mostrar muted/strike
+      prazoIniLabel = `<span style="color:var(--g-text-mute);text-decoration:line-through" title="Prazo original">${fmtPrazo(dInicial)}</span>`;
+    } else if (isOverdue) {
+      // Sem reagendamento e atrasado — destaque vermelho
+      prazoIniLabel = `<span style="color:var(--tipo-a);font-weight:700" title="Atrasada há ${Math.abs(dd)} dia${Math.abs(dd)===1?'':'s'}">${fmtPrazo(dInicial)}</span>`;
+    } else {
+      prazoIniLabel = fmtPrazo(dInicial);
+    }
+
+    // Coluna 2: Prazo Reagendado — só preenche se houver reagendamento
+    let prazoReagLabel;
+    if (!dReag || !isReagendado) {
+      prazoReagLabel = '<span style="color:var(--g-text-mute)">—</span>';
+    } else if (isOverdue) {
+      prazoReagLabel = `<span style="color:var(--tipo-a);font-weight:700" title="Atrasada há ${Math.abs(dd)} dia${Math.abs(dd)===1?'':'s'}">${fmtPrazo(dReag)}</span>`;
+    } else {
+      prazoReagLabel = `<span style="color:var(--tipo-b);font-weight:700">${fmtPrazo(dReag)}</span>`;
+    }
+
+    const nReprog = r.n_reprogramacoes || 0;
+    const reprogCell = nReprog > 0
+      ? `<span class="chip reprog-chip" title="Reprogramada ${nReprog}× — original: ${dInicial ? fmtPrazo(dInicial) : '—'}">${nReprog}×</span>`
+      : '<span style="color:var(--g-text-mute);font-size:11px">—</span>';
+    return `
+      <tr class="fade-in ${r.status==='Resolvida'?'resolvida':''}">
+        <td><span class="chip dark">${esc(r.id)}</span></td>
+        <td>${buildTipoChip(r)}</td>
+        <td><span class="chip ${stCls}">${esc(r.status||'Em Aberto')}</span></td>
+        <td><span class="chip blue">${esc(getArea(r.ativo))}</span></td>
+        <td><span class="chip ghost">${esc(getAtivoName(r.ativo))}</span></td>
+        <td><span class="chip blue">${esc(r.disciplina)}</span></td>
+        <td><div class="cell-truncate" title="${esc(r.causa)}">${esc(capFirst(r.causa))}</div></td>
+        <td>${prazoIniLabel}</td>
+        <td>${prazoReagLabel}</td>
+        <td>${reprogCell}</td>
+        <td>${esc(r.responsavel||'—')}</td>
+        <td>
+          ${r.status !== 'Resolvida' ? `<button class="tb-btn" data-action="resolve" data-id="${esc(r.id)}" style="padding:4px 8px;font-size:11px">✓</button>` : `<button class="tb-btn" data-action="reabrir" data-id="${esc(r.id)}" style="padding:4px 8px;font-size:11px">↺</button>`}
+          <button class="tb-btn" data-action="edit" data-id="${esc(r.id)}" style="padding:4px 8px;font-size:11px">✏️</button>
+        </td>
+      </tr>
+    `;
+  }).join('') : `<tr><td colspan="12" style="padding:24px;text-align:center;color:var(--g-text-soft)">Nenhuma restrição corresponde aos filtros aplicados.</td></tr>`;
+}
+
+/* ======================== AÇÕES ======================== */
+document.addEventListener('click', (e) => {
+  // Tipo chip → mudar A/B/C
+  const tipoEdit = e.target.closest('[data-edit-id]');
+  if (tipoEdit && tipoEdit.classList.contains('tipo-tag')) {
+    const id = tipoEdit.dataset.editId;
+    cycleTipo(id);
+    return;
+  }
+  // Ações
+  const btn = e.target.closest('[data-action]');
+  if (!btn) return;
+  const id = btn.dataset.id;
+  const action = btn.dataset.action;
+  const r = DATA.find(x => x.id === id);
+  if (!r) return;
+  if (action === 'resolve') {
+    r.status = 'Resolvida';
+    showToast(`✓ ${id} marcada como Resolvida`, 'success');
+  } else if (action === 'andamento') {
+    r.status = 'Em Andamento';
+    showToast(`⏳ ${id} em andamento`);
+  } else if (action === 'reabrir') {
+    r.status = 'Em Aberto';
+    showToast(`↺ ${id} reaberta`);
+  } else if (action === 'edit') {
+    openEditModal(id);
+    return;
+  }
+  saveState(); render();
+});
+
+function cycleTipo(id) {
+  const r = DATA.find(x => x.id === id);
+  if (!r) return;
+  const order = ['A','B','C'];
+  const cur = order.indexOf(r.tipo);
+  r.tipo = order[(cur + 1) % 3];
+  r.tipo_inferido = false;
+  saveState();
+  render();
+  showToast(`${id} → Tipo ${r.tipo}`);
+}
+
+/* ======================== MODAL ======================== */
+function openAddModal() {
+  $('modal-title').textContent = 'Nova Restrição';
+  $('form-restricao').reset();
+  $('f-id-original').value = '';
+  // Limpar hint de reprogramação
+  const hint = $('f-prazo-hint');
+  if (hint) hint.textContent = '';
+  // Sugerir próximo ID
+  const nums = DATA.map(r => parseInt((r.id||'').replace(/\D/g,''),10)).filter(n => !isNaN(n));
+  const next = (nums.length ? Math.max(...nums) : 0) + 1;
+  $('f-id').value = 'R' + String(next).padStart(2,'0');
+  $('f-status').value = 'Em Aberto';
+  // Pré-preencher site mais frequente
+  const siteCounts = {};
+  DATA.forEach(r => { const s = r.site||''; if (s) siteCounts[s] = (siteCounts[s]||0)+1; });
+  const topSite = Object.entries(siteCounts).sort((a,b)=>b[1]-a[1])[0]?.[0] || 'Itabiritos';
+  $('f-site').value = topSite;
+  // Categoria default: Construção e Montagem (mais comum)
+  $('f-categoria').value = 'Construção e Montagem';
+  // Pré-selecionar B (mais comum)
+  $('ft-b').checked = true;
+  $('modal-overlay').classList.add('show');
+}
+
+function openEditModal(id) {
+  const r = DATA.find(x => x.id === id);
+  if (!r) return;
+  $('modal-title').textContent = `Editar ${id}`;
+  $('f-id-original').value = id;
+  $('f-id').value = r.id || '';
+  $('f-status').value = r.status || 'Em Aberto';
+  $('f-site').value = r.site || '';
+  $('f-ativo').value = r.ativo || '';
+  $('f-disciplina').value = r.disciplina || '';
+  $('f-categoria').value = r.categoria || 'Construção e Montagem';
+  $('f-subdisciplina').value = r.subdisciplina || '';
+  $('f-prazo').value = r.prazo_reagendado || r.prazo || '';
+  // Hint de reprogramação
+  const nReprog = r.n_reprogramacoes || 0;
+  const hint = $('f-prazo-hint');
+  if (hint) {
+    if (nReprog > 0) {
+      const orig = r.prazo ? fmtPrazo(parseDate(r.prazo)) : '—';
+      hint.innerHTML = `· <strong style="color:var(--tipo-a)">${nReprog}× reprogramado</strong> (original: ${orig})`;
+    } else {
+      hint.textContent = '';
+    }
+  }
+  $('f-causa').value = r.causa || '';
+  $('f-efeito').value = r.efeito || '';
+  $('f-responsavel').value = r.responsavel || '';
+  $('f-impeditivo').value = r.impeditivo || '';
+  $('f-obs').value = r.obs || '';
+  if (r.tipo === 'A') $('ft-a').checked = true;
+  else if (r.tipo === 'C') $('ft-c').checked = true;
+  else $('ft-b').checked = true;
+  $('modal-overlay').classList.add('show');
+}
+
+function closeModal() {
+  $('modal-overlay').classList.remove('show');
+}
+
+function saveModal() {
+  const idOriginal = $('f-id-original').value;
+  const id = $('f-id').value.trim();
+  const causa = $('f-causa').value.trim();
+  const tipo = (document.querySelector('input[name="tipo"]:checked')||{}).value;
+  if (!id) { showToast('Informe o ID', 'error'); return; }
+  if (!causa) { showToast('Informe a descrição da restrição', 'error'); return; }
+  if (!tipo) { showToast('Selecione o tipo (A/B/C)', 'error'); return; }
+  // Conflito de ID
+  if (idOriginal !== id && DATA.find(x => x.id === id)) {
+    showToast('Já existe restrição com esse ID', 'error');
+    return;
+  }
+  const novoPrazo = $('f-prazo').value || null;
+  const payload = {
+    id,
+    site: ($('f-site').value || '').trim() || 'Itabiritos',
+    ativo: $('f-ativo').value.trim(),
+    disciplina: $('f-disciplina').value.trim(),
+    subdisciplina: $('f-subdisciplina').value.trim(),
+    categoria: $('f-categoria').value || 'Construção e Montagem',
+    causa,
+    efeito: $('f-efeito').value.trim(),
+    responsavel: $('f-responsavel').value.trim(),
+    status: $('f-status').value || 'Em Aberto',
+    obs: $('f-obs').value.trim(),
+    prazo: novoPrazo,
+    prazo_reagendado: null,
+    n_reprogramacoes: 0,
+    tipo,
+    tipo_inferido: false,
+    categoria_inferida: false,
+    impeditivo: $('f-impeditivo').value || ''
+  };
+  if (idOriginal) {
+    const idx = DATA.findIndex(x => x.id === idOriginal);
+    if (idx >= 0) {
+      const existing = DATA[idx];
+      const prazoAtualEfetivo = existing.prazo_reagendado || existing.prazo || null;
+      const nReprogAtual = existing.n_reprogramacoes || 0;
+      if (novoPrazo && prazoAtualEfetivo && novoPrazo !== prazoAtualEfetivo) {
+        // Reprogramou: mantém o prazo ORIGINAL, atualiza o reagendado e incrementa contador
+        payload.prazo = existing.prazo;
+        payload.prazo_reagendado = novoPrazo;
+        payload.n_reprogramacoes = nReprogAtual + 1;
+        showToast(`✓ ${id} reprogramada (${payload.n_reprogramacoes}ª vez)`, 'success');
+      } else if (novoPrazo && !existing.prazo && !existing.prazo_reagendado) {
+        // Primeiro prazo sendo definido (não conta como reprogramação)
+        payload.prazo = novoPrazo;
+        payload.prazo_reagendado = null;
+        payload.n_reprogramacoes = nReprogAtual;
+        showToast(`✓ ${id} atualizada`, 'success');
+      } else if (!novoPrazo) {
+        // Removeu o prazo: zera reagendado mas mantém o histórico de reprogramações e o original
+        payload.prazo = existing.prazo;
+        payload.prazo_reagendado = null;
+        payload.n_reprogramacoes = nReprogAtual;
+        showToast(`✓ ${id} atualizada`, 'success');
+      } else {
+        // Prazo igual ao efetivo atual — preserva tudo
+        payload.prazo = existing.prazo;
+        payload.prazo_reagendado = existing.prazo_reagendado;
+        payload.n_reprogramacoes = nReprogAtual;
+        showToast(`✓ ${id} atualizada`, 'success');
+      }
+      DATA[idx] = payload;
+    }
+  } else {
+    DATA.push(payload);
+    showToast(`✓ ${id} adicionada`, 'success');
+  }
+  saveState();
+  refreshRespLists();
+  closeModal();
+  render();
+}
+
+function refreshRespLists() {
+  // Reconstrói filtro de Responsável e datalist após adição/edição
+  const resps = [...new Set(DATA.map(r => r.responsavel || '').filter(Boolean))].sort();
+
+  // Filtro de Responsável (preserva valor atual)
+  const filterResp = $('filter-resp');
+  if (filterResp) {
+    const cur = filterResp.value;
+    filterResp.innerHTML = '<option value="">Todos</option>';
+    resps.forEach(r => {
+      const o = document.createElement('option');
+      o.value = r; o.textContent = r;
+      if (r === cur) o.selected = true;
+      filterResp.appendChild(o);
+    });
+  }
+
+  // Datalist de sugestões de responsável no modal
+  const dl = $('dl-resp');
+  if (dl) {
+    dl.innerHTML = '';
+    resps.forEach(r => {
+      const o = document.createElement('option');
+      o.value = r;
+      dl.appendChild(o);
+    });
+  }
+
+  // Filtro de Site (preserva valor atual) + datalist do modal
+  const sites = [...new Set(DATA.map(r => r.site || '').filter(Boolean))].sort();
+  const filterSite = $('filter-site');
+  if (filterSite) {
+    const cur = filterSite.value;
+    filterSite.innerHTML = '<option value="">Todos</option>';
+    sites.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s; o.textContent = s;
+      if (s === cur) o.selected = true;
+      filterSite.appendChild(o);
+    });
+  }
+  const dlSite = $('dl-site');
+  if (dlSite) {
+    dlSite.innerHTML = '';
+    sites.forEach(s => {
+      const o = document.createElement('option');
+      o.value = s;
+      dlSite.appendChild(o);
+    });
+  }
+}
+
+/* ======================== EXPORT / IMPORT / RESET ======================== */
+function exportCSV() {
+  const cols = ['id','site','ativo','disciplina','subdisciplina','categoria','causa','efeito','responsavel','status','obs','prazo','prazo_reagendado','n_reprogramacoes','tipo','tipo_inferido','categoria_inferida','impeditivo'];
+  const headerLabels = {
+    id: 'ID', site: 'Site', ativo: 'Ativo', disciplina: 'Disciplina',
+    subdisciplina: 'Subdisciplina', categoria: 'Categoria',
+    causa: 'Restrição', efeito: 'Risco/Efeito',
+    responsavel: 'Responsável', status: 'Status', obs: 'OBS',
+    prazo: 'Prazo', prazo_reagendado: 'Prazo Reagendado',
+    n_reprogramacoes: 'Nº de Reprogramações',
+    tipo: 'Tipo de Restrição', tipo_inferido: 'Classificação Inferida',
+    categoria_inferida: 'Categoria Inferida',
+    impeditivo: 'Impeditivo'
+  };
+  const escapeCsv = v => {
+    const s = (v == null) ? '' : String(v);
+    if (/[",;\n]/.test(s)) return '"' + s.replace(/"/g,'""') + '"';
+    return s;
+  };
+  const lines = [cols.map(c => escapeCsv(headerLabels[c])).join(';')];
+  DATA.forEach(r => {
+    lines.push(cols.map(c => escapeCsv(r[c])).join(';'));
+  });
+  // BOM para Excel reconhecer UTF-8
+  const blob = new Blob(['\uFEFF' + lines.join('\n')], {type: 'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Restricoes_Itabiritos_${todayISO()}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  URL.revokeObjectURL(url);
+  showToast('📤 CSV exportado', 'success');
+}
+
+function importFile(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const text = e.target.result;
+      let parsed;
+      if (file.name.toLowerCase().endsWith('.json')) {
+        parsed = JSON.parse(text);
+      } else {
+        parsed = parseCSV(text);
+      }
+      if (!Array.isArray(parsed) || parsed.length === 0) {
+        showToast('Arquivo inválido ou vazio', 'error'); return;
+      }
+      // Normalizar campos esperados
+      const normalized = parsed.map(row => normalizeRow(row));
+      DATA = normalized;
+      saveState();
+      refreshRespLists();
+      render();
+      showToast(`📥 ${normalized.length} registros importados`, 'success');
+    } catch(err) {
+      console.error(err);
+      showToast('Erro ao importar: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file, 'UTF-8');
+}
+
+function parseCSV(text) {
+  // Remover BOM
+  if (text.charCodeAt(0) === 0xFEFF) text = text.slice(1);
+  const lines = text.split(/\r?\n/).filter(l => l.length);
+  if (!lines.length) return [];
+  // Detectar separador
+  const firstLine = lines[0];
+  const sep = firstLine.includes(';') ? ';' : ',';
+  const splitCsv = line => {
+    const out = [];
+    let cur = '', inQ = false;
+    for (let i = 0; i < line.length; i++) {
+      const c = line[i];
+      if (inQ) {
+        if (c === '"') {
+          if (line[i+1] === '"') { cur += '"'; i++; }
+          else inQ = false;
+        } else cur += c;
+      } else {
+        if (c === '"') inQ = true;
+        else if (c === sep) { out.push(cur); cur = ''; }
+        else cur += c;
+      }
+    }
+    out.push(cur);
+    return out;
+  };
+  const headers = splitCsv(lines[0]).map(h => h.trim());
+  return lines.slice(1).map(line => {
+    const vals = splitCsv(line);
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = (vals[i] || '').trim());
+    return obj;
+  });
+}
+
+const HEADER_MAP = {
+  'ID': 'id', 'Site': 'site', 'Ativo': 'ativo',
+  'Disciplina': 'disciplina', 'Subdisciplina': 'subdisciplina',
+  'Categoria': 'categoria',
+  'Restrição': 'causa', 'Risco/Efeito': 'efeito', 'Risco': 'efeito',
+  'Responsável': 'responsavel', 'Status': 'status', 'OBS': 'obs', 'Observações': 'obs',
+  'Prazo': 'prazo', 'Prazo Reagendado': 'prazo_reagendado',
+  'Nº de Reprogramações': 'n_reprogramacoes', 'N° de Reprogramações': 'n_reprogramacoes',
+  'No de Reprogramacoes': 'n_reprogramacoes', 'Reprogramações': 'n_reprogramacoes',
+  'Tipo de Restrição': 'tipo', 'Tipo': 'tipo',
+  'Classificação Inferida': 'tipo_inferido',
+  'Categoria Inferida': 'categoria_inferida',
+  'Impeditivo': 'impeditivo'
+};
+
+// Converte data em formato BR (dd/mm/yyyy) ou ISO (yyyy-mm-dd) para ISO; null se vazio
+function normalizeDate(v) {
+  if (v == null) return null;
+  const s = String(v).trim();
+  if (!s || s === 'NaT' || s === 'None') return null;
+  let m = s.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if (m) {
+    const [, d, mo, y] = m;
+    return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  m = s.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
+  if (m) {
+    const [, y, mo, d] = m;
+    return `${y}-${mo.padStart(2,'0')}-${d.padStart(2,'0')}`;
+  }
+  return null;
+}
+
+function normalizeRow(row) {
+  const r = {};
+  // mapear possíveis cabeçalhos
+  Object.entries(row).forEach(([k, v]) => {
+    const norm = HEADER_MAP[k] || k.toLowerCase();
+    r[norm] = v;
+  });
+  // Defaults
+  r.id = r.id || '';
+  r.site = r.site || 'Itabiritos';
+  r.status = r.status || 'Em Aberto';
+  r.tipo = (r.tipo||'').toString().trim().toUpperCase();
+  if (!['A','B','C'].includes(r.tipo)) {
+    r.tipo = inferTipo(r);
+    r.tipo_inferido = true;
+  } else {
+    r.tipo_inferido = (r.tipo_inferido === 'true' || r.tipo_inferido === true);
+  }
+  // Categoria
+  const catRaw = (r.categoria||'').toString().trim();
+  const catNorm = (() => {
+    const n = catRaw.toLowerCase();
+    if (n.startsWith('comiss')) return 'Comissionamento';
+    if (n.startsWith('constr')) return 'Construção e Montagem';
+    return null;
+  })();
+  if (catNorm) {
+    r.categoria = catNorm;
+    r.categoria_inferida = (r.categoria_inferida === 'true' || r.categoria_inferida === true);
+  } else {
+    r.categoria = inferCategoria(r);
+    r.categoria_inferida = true;
+  }
+  // Tratar separação de causa/efeito se vier juntos
+  if (r.causa && r.causa.includes('→') && !r.efeito) {
+    const parts = r.causa.split('→', 2);
+    r.causa = parts[0].replace(/^(Executar|Completar|Configurar|Liberar):\s*/i, '').trim();
+    r.efeito = parts[1].replace(/^Risco:\s*/i, '').trim();
+  }
+  r.causa = r.causa || '';
+  r.efeito = r.efeito || '';
+  // Datas: aceita BR (dd/mm/yyyy) ou ISO
+  r.prazo = normalizeDate(r.prazo);
+  r.prazo_reagendado = normalizeDate(r.prazo_reagendado);
+  // n_reprogramacoes
+  const n = parseInt(r.n_reprogramacoes, 10);
+  if (!isNaN(n) && n >= 0) {
+    r.n_reprogramacoes = n;
+  } else {
+    // Inferir: 1 se houver reagendado diferente do original, 0 caso contrário
+    r.n_reprogramacoes = (r.prazo_reagendado && r.prazo && r.prazo_reagendado !== r.prazo) ? 1 : 0;
+  }
+  return r;
+}
+
+function inferTipo(r) {
+  const imp = (r.impeditivo||'').toLowerCase().trim();
+  if (imp === 'não' || imp === 'nao' || imp === 'no') return 'C';
+  const efeito = (r.efeito||'').toLowerCase();
+  if (efeito.includes('caminho crítico') || efeito.includes('caminho critico') ||
+      efeito.includes('caminho de comissionamento') ||
+      efeito.includes('comprometer o cronograma') ||
+      efeito.includes('comissionamento') ||
+      efeito.includes('energização') || efeito.includes('energizacao')) return 'A';
+  return 'B';
+}
+
+function inferCategoria(r) {
+  const sub = (r.subdisciplina||'').toLowerCase();
+  const causa = (r.causa||'').toLowerCase();
+  if (sub.includes('comission') || causa.includes('comission')) return 'Comissionamento';
+  if (causa.includes('protocolo') || causa.includes('flushing') || causa.includes('partida')) return 'Comissionamento';
+  // "teste" / "testes" como palavra isolada (evitar bater em "estes")
+  if (/\bteste[s]?\b/.test(causa)) return 'Comissionamento';
+  return 'Construção e Montagem';
+}
+
+function resetData() {
+  if (!confirm('Descartar todas as mudanças locais e voltar à base original?')) return;
+  DATA = JSON.parse(JSON.stringify(BASE_DATA));
+  try {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem('utmii-restricoes-v3');
+    localStorage.removeItem('utmii-restricoes-v2');
+  } catch(e) {}
+  refreshRespLists();
+  render();
+  refreshChangesIndicator();
+  showToast('↺ Base resetada', 'success');
+}
+
+/* ======================== RENDER PRINCIPAL ======================== */
+function render() {
+  let filtered = applyFilters();
+  if (state.focusBucket) {
+    filtered = filtered.filter(r => state.focusBucket.has(r.id));
+  }
+  const sorted = applySort(filtered);
+  $('result-count').textContent = filtered.length;
+  $('result-total').textContent = DATA.length;
+
+  // KPIs e gráficos sempre usam todos os dados (filtrados pelos filtros, mas não focusBucket)
+  const filteredNoBucket = applyFilters();
+  renderKPIs(filteredNoBucket);
+  renderFocus(filteredNoBucket);
+  renderLoadMap(filteredNoBucket);
+  renderCharts(filteredNoBucket);
+  renderSpotlight(filteredNoBucket);
+
+  const total = sorted.length;
+  const pages = Math.max(1, Math.ceil(total / state.pageSize));
+  if (state.page > pages) state.page = pages;
+  const start = (state.page - 1) * state.pageSize;
+  const pageItems = sorted.slice(start, start + state.pageSize);
+
+  renderCards(pageItems);
+  renderTable(pageItems);
+
+  $('pg-current').textContent = state.page;
+  $('pg-total').textContent = pages;
+  $('pg-show').textContent = total;
+  $('pg-first').disabled = state.page <= 1;
+  $('pg-prev').disabled = state.page <= 1;
+  $('pg-next').disabled = state.page >= pages;
+  $('pg-last').disabled = state.page >= pages;
+
+  refreshChangesIndicator();
+}
+
+/* ======================== INIT ======================== */
+function initFilters() {
+  const fillSelect = (id, values) => {
+    const el = $(id);
+    // Limpar opções existentes (exceto a primeira)
+    while (el.options.length > 1) el.remove(1);
+    values.forEach(v => {
+      const o = document.createElement('option');
+      o.value = v; o.textContent = v;
+      el.appendChild(o);
+    });
+  };
+  const sites = [...new Set(DATA.map(r=>r.site||'').filter(Boolean))].sort();
+  fillSelect('filter-site', sites);
+  const discs = [...new Set(DATA.map(r=>r.disciplina).filter(Boolean))].sort();
+  fillSelect('filter-disc', discs);
+  const areas = [...new Set(DATA.map(r=>getArea(r.ativo)).filter(Boolean))].sort();
+  fillSelect('filter-area', areas);
+  const resps = [...new Set(DATA.map(r=>r.responsavel||'').filter(Boolean))].sort();
+  fillSelect('filter-resp', resps);
+
+  // Form: disciplinas e datalist resp
+  const fd = $('f-disciplina');
+  while (fd.options.length) fd.remove(0);
+  ['Civil','Elétrica','Mecânica','Tubulação','Suprimentos','Protocolos','Comissionamento','Outros'].forEach(d => {
+    const o = document.createElement('option'); o.value = d; o.textContent = d;
+    fd.appendChild(o);
+  });
+  const dl = $('dl-resp');
+  dl.innerHTML = '';
+  resps.forEach(r => { const o = document.createElement('option'); o.value = r; dl.appendChild(o); });
+
+  // Datalist de sites no modal
+  const dlSite = $('dl-site');
+  if (dlSite) {
+    dlSite.innerHTML = '';
+    sites.forEach(s => { const o = document.createElement('option'); o.value = s; dlSite.appendChild(o); });
+  }
+
+  $('filter-site').addEventListener('change', e => { state.site = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-categoria').addEventListener('change', e => { state.categoria = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-disc').addEventListener('change', e => { state.disc = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-area').addEventListener('change', e => { state.area = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-tipo').addEventListener('change', e => { state.tipo = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-status').addEventListener('change', e => { state.status = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+  $('filter-resp').addEventListener('change', e => { state.resp = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); });
+
+  let t;
+  $('filter-search').addEventListener('input', e => {
+    clearTimeout(t); t = setTimeout(() => { state.search = e.target.value; state.page = 1; state.focusBucket = null; state.focusBucketKey = null; render(); }, 150);
+  });
+  $('btn-clear').addEventListener('click', () => {
+    state.site = ''; state.categoria = ''; state.disc = ''; state.area = ''; state.tipo = ''; state.status = ''; state.resp = ''; state.search = '';
+    state.focusBucket = null; state.focusBucketKey = null; state.page = 1;
+    ['filter-site','filter-categoria','filter-disc','filter-area','filter-tipo','filter-status','filter-resp','filter-search'].forEach(id => $(id).value = '');
+    render();
+  });
+
+  document.querySelectorAll('.table-view th[data-key]').forEach(th => {
+    th.addEventListener('click', () => {
+      const k = th.dataset.key;
+      if (state.sortKey === k) state.sortDir = state.sortDir==='asc'?'desc':'asc';
+      else { state.sortKey = k; state.sortDir = 'asc'; }
+      render();
+    });
+  });
+
+  $('v-cards').addEventListener('click', () => {
+    state.view = 'cards';
+    $('v-cards').classList.add('active');
+    $('v-table').classList.remove('active');
+    $('cards-view').style.display = 'grid';
+    $('table-view').style.display = 'none';
+  });
+  $('v-table').addEventListener('click', () => {
+    state.view = 'table';
+    $('v-table').classList.add('active');
+    $('v-cards').classList.remove('active');
+    $('cards-view').style.display = 'none';
+    $('table-view').style.display = 'block';
+  });
+
+  $('pg-first').addEventListener('click', ()=>{ state.page = 1; render(); });
+  $('pg-prev') .addEventListener('click', ()=>{ state.page = Math.max(1, state.page-1); render(); });
+  $('pg-next') .addEventListener('click', ()=>{ state.page = state.page+1; render(); });
+  $('pg-last') .addEventListener('click', ()=>{
+    const total = applyFilters().length;
+    state.page = Math.max(1, Math.ceil(total / state.pageSize));
+    render();
+  });
+
+  if (window.matchMedia('(min-width: 1100px)').matches) {
+    $('v-table').click();
+  }
+
+  // Toolbar
+  $('btn-add').addEventListener('click', openAddModal);
+  $('btn-export').addEventListener('click', exportCSV);
+  $('btn-import').addEventListener('click', () => $('file-import').click());
+  $('file-import').addEventListener('change', e => {
+    const f = e.target.files[0];
+    if (f) importFile(f);
+    e.target.value = '';
+  });
+  $('btn-reset').addEventListener('click', resetData);
+
+  // Modal
+  $('btn-cancel').addEventListener('click', closeModal);
+  $('modal-close').addEventListener('click', closeModal);
+  $('modal-overlay').addEventListener('click', e => { if (e.target === e.currentTarget) closeModal(); });
+  $('btn-save').addEventListener('click', saveModal);
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && $('modal-overlay').classList.contains('show')) closeModal();
+  });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  console.log('✓ Painel Itabiritos v2 carregado · ' + DATA.length + ' restrições');
+  try {
+    initFilters();
+    render();
+  } catch(e) {
+    console.error('❌ Erro:', e);
+    alert('Erro: ' + e.message);
+  }
+});
+</script>
+</body>
+</html>
