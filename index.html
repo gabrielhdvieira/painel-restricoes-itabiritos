@@ -1709,12 +1709,8 @@
 <div id="publish-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
     <h3 style="margin:0 0 6px;font-size:18px;color:#002E6D">☁️ Publicar Painel</h3>
-    <p style="margin:0 0 18px;font-size:13px;color:#64748b">Suas alterações serão salvas e o painel online será atualizado para todos em ~60 segundos.</p>
-    <div id="publish-token-wrap">
-      <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:6px">Token GitHub (salvo no seu navegador)</label>
-      <input id="pub-token" type="password" placeholder="ghp_..." style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;box-sizing:border-box;margin-bottom:4px">
-      <div style="font-size:11px;color:#94a3b8;margin-bottom:16px">Gere em github.com/settings/tokens com permissão <strong>repo</strong></div>
-    </div>
+    <p style="margin:0 0 18px;font-size:13px;color:#64748b">Suas alterações serão salvas e o painel online será atualizado para todos em <strong>~60 segundos</strong>. Descreva o que mudou (opcional) e clique em Publicar.</p>
+    <input id="pub-token" type="hidden" value="">
     <label style="font-size:12px;font-weight:700;color:#374151;display:block;margin-bottom:6px">Mensagem do commit (opcional)</label>
     <input id="pub-msg" type="text" placeholder="ex: Adicionei restrições do Moinho" style="width:100%;padding:8px 12px;border:1px solid #d1d5db;border-radius:8px;font-size:13px;box-sizing:border-box;margin-bottom:18px">
     <div id="pub-status" style="display:none;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:14px"></div>
@@ -3458,8 +3454,7 @@ const GH_REPO  = 'painel-restricoes-itabiritos';
 const GH_FILE  = 'index.html';
 
 function openPublishModal() {
-  const saved = localStorage.getItem('gh_token') || '';
-  $('pub-token').value = saved;
+  $('pub-token').value = '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';
   $('pub-msg').value   = '';
   $('pub-status').style.display = 'none';
   $('pub-confirm').disabled = false;
@@ -3481,9 +3476,6 @@ function pubStatus(msg, type) {
 
 async function publishToGitHub() {
   const token = $('pub-token').value.trim();
-  if (!token) { pubStatus('⚠ Informe o token GitHub.', 'warn'); return; }
-  localStorage.setItem('gh_token', token);
-
   const msg = $('pub-msg').value.trim() || ('Painel atualizado — ' + new Date().toLocaleString('pt-BR'));
   $('pub-confirm').disabled = true;
   $('pub-confirm').textContent = '⏳ Publicando...';
