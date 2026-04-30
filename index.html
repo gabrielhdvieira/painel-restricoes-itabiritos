@@ -3524,4 +3524,97 @@ const GH_REPO  = 'painel-restricoes-itabiritos';
 const GH_FILE  = 'index.html';
 
 function openPublishModal() {
-  $('pub-token
+  $('pub-token').value = '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';
+  $('pub-msg').value   = '';
+  $('pub-status').style.display = 'none';
+  $('pub-confirm').disabled = false;
+  $('pub-confirm').textContent = '🚀 Publicar agora';
+  $('publish-overlay').style.display = 'flex';
+}
+
+function closePublishModal() {
+  $('publish-overlay').style.display = 'none';
+}
+
+function pubStatus(msg, type) {
+  const el = $('pub-status');
+  el.style.display = 'block';
+  el.style.background = type === 'ok' ? '#dcfce7' : type === 'err' ? '#fee2e2' : '#fef9c3';
+  el.style.color      = type === 'ok' ? '#15803d' : type === 'err' ? '#b91c1c' : '#854d0e';
+  el.textContent = msg;
+}
+
+async function publishToGitHub() {
+  const token = $('pub-token').value.trim();
+  const msg = $('pub-msg').value.trim() || ('Painel atualizado — ' + new Date().toLocaleString('pt-BR'));
+  $('pub-confirm').disabled = true;
+  $('pub-confirm').textContent = '⏳ Publicando...';
+  pubStatus('Conectando ao GitHub...', 'warn');
+
+  const API = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
+  const headers = {
+    'Authorization': `token ${token}`,
+    'Accept': 'application/vnd.github.v3+json',
+    'Content-Type': 'application/json'
+  };
+
+  try {
+    // 1. Buscar SHA atual
+    pubStatus('Buscando versão atual...', 'warn');
+    const infoRes = await fetch(API, { headers });
+    if (!infoRes.ok) throw new Error(`Erro ao buscar arquivo: ${infoRes.status}`);
+    const info = await infoRes.json();
+    const sha  = info.sha;
+
+    // 2. Montar HTML atualizado — substitui BASE_DATA pelo DATA atual
+    pubStatus('Preparando arquivo...', 'warn');
+    const newDataJson = JSON.stringify(DATA);
+    let   currentHtml = document.documentElement.outerHTML;
+    currentHtml = currentHtml.replace(
+      /const BASE_DATA = \[.*?\];/s,
+      `const BASE_DATA = ${newDataJson};`
+    );
+
+    // 3. Codificar em base64
+    const encoded = btoa(unescape(encodeURIComponent(currentHtml)));
+
+    // 4. Commit
+    pubStatus('Publicando no GitHub...', 'warn');
+    const putRes = await fetch(API, {
+      method: 'PUT',
+      headers,
+      body: JSON.stringify({ message: msg, content: encoded, sha })
+    });
+    if (!putRes.ok) {
+      const err = await putRes.json();
+      throw new Error(err.message || putRes.status);
+    }
+
+    pubStatus('✅ Publicado com sucesso! O painel online atualiza em ~60 segundos.', 'ok');
+    $('pub-confirm').textContent = '✅ Publicado!';
+    setTimeout(closePublishModal, 3000);
+
+  } catch(e) {
+    pubStatus(`❌ Erro: ${e.message}`, 'err');
+    $('pub-confirm').disabled = false;
+    $('pub-confirm').textContent = '🚀 Tentar novamente';
+  }
+}
+
+$('btn-publish').addEventListener('click', () => authGuard(openPublishModal));
+$('pub-cancel').addEventListener('click', closePublishModal);
+$('pub-confirm').addEventListener('click', publishToGitHub);
+$('publish-overlay').addEventListener('click', e => { if (e.target === $('publish-overlay')) closePublishModal(); });
+
+    console.log('✓ Painel Itabiritos v2 carregado · ' + DATA.length + ' restrições');
+  try {
+    initFilters();
+    render();
+  } catch(e) {
+    console.error('❌ Erro:', e);
+    alert('Erro: ' + e.message);
+  }
+});
+</script>
+</body>
+</html>
