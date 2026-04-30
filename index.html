@@ -1705,6 +1705,28 @@
 </main>
 
 
+
+<!-- MODAL: Autenticação -->
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:4000;align-items:center;justify-content:center">
+  <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:380px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+    <div style="text-align:center;margin-bottom:18px">
+      <div style="font-size:32px;margin-bottom:8px">🔒</div>
+      <h3 style="margin:0 0 4px;font-size:18px;color:#002E6D">Área Restrita</h3>
+      <p style="margin:0;font-size:13px;color:#64748b">Digite a senha para editar o painel</p>
+    </div>
+    <input id="auth-input" type="password" placeholder="Senha..." 
+      style="width:100%;padding:10px 14px;border:2px solid #e2e8f0;border-radius:10px;font-size:15px;box-sizing:border-box;margin-bottom:10px;text-align:center;letter-spacing:0.1em"
+      autocomplete="off">
+    <div id="auth-error" style="display:none;color:#b91c1c;font-size:12px;text-align:center;margin-bottom:10px">
+      ❌ Senha incorreta. Tente novamente.
+    </div>
+    <div style="display:flex;gap:10px">
+      <button id="auth-cancel" style="flex:1;padding:10px;border:1px solid #d1d5db;background:#fff;border-radius:10px;cursor:pointer;font-size:14px">Cancelar</button>
+      <button id="auth-confirm" style="flex:1;padding:10px;background:#002E6D;color:#fff;border:none;border-radius:10px;cursor:pointer;font-weight:700;font-size:14px">Entrar</button>
+    </div>
+  </div>
+</div>
+
 <!-- MODAL: Publicar no GitHub -->
 <div id="publish-overlay" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.55);z-index:3000;align-items:center;justify-content:center">
   <div style="background:#fff;border-radius:16px;padding:28px 32px;max-width:440px;width:90%;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
@@ -2836,6 +2858,18 @@ function renderTable(pageItems) {
 document.addEventListener('click', (e) => {
   // Tipo chip → mudar A/B/C
   const tipoEdit = e.target.closest('[data-edit-id]');
+  if (action && ['resolve','reabrir','edit','delete'].includes(action)) {
+    e.stopPropagation();
+    authGuard(() => {
+      const r2 = DATA.find(x => x.id === id);
+      if (!r2) return;
+      if (action === 'resolve')  { r2.status = 'Resolvida'; saveData(); renderAll(); }
+      else if (action === 'reabrir') { r2.status = 'Em Aberto'; saveData(); renderAll(); }
+      else if (action === 'edit')    openEditModal(r2);
+      else if (action === 'delete')  { if (confirm(`Remover ${id}?`)) { DATA = DATA.filter(x=>x.id!==id); saveData(); renderAll(); } }
+    });
+    return;
+  }
   if (tipoEdit && tipoEdit.classList.contains('tipo-tag')) {
     const id = tipoEdit.dataset.editId;
     cycleTipo(id);
@@ -3426,15 +3460,15 @@ function initFilters() {
   }
 
   // Toolbar
-  $('btn-add').addEventListener('click', openAddModal);
+  $('btn-add').addEventListener('click',    () => authGuard(openAddModal));
   $('btn-export').addEventListener('click', exportCSV);
-  $('btn-import').addEventListener('click', () => $('file-import').click());
+  $('btn-import').addEventListener('click', () => authGuard(() => $('file-import').click()));
   $('file-import').addEventListener('change', e => {
     const f = e.target.files[0];
     if (f) importFile(f);
     e.target.value = '';
   });
-  $('btn-reset').addEventListener('click', resetData);
+  $('btn-reset').addEventListener('click',   () => authGuard(resetData));
 
   // Modal
   $('btn-cancel').addEventListener('click', closeModal);
@@ -3448,103 +3482,46 @@ function initFilters() {
 
 document.addEventListener('DOMContentLoaded', () => {
 
+
+/* ======================== AUTENTICAÇÃO ======================== */
+const SENHA = 'Gerdau@Itabiritos2026';
+let _authOk    = false;
+let _authQueue = null; // callback aguardando auth
+
+function authGuard(callback) {
+  if (_authOk) { callback(); return; }
+  _authQueue = callback;
+  $('auth-input').value   = '';
+  $('auth-error').style.display = 'none';
+  $('auth-overlay').style.display = 'flex';
+  setTimeout(() => $('auth-input').focus(), 100);
+}
+
+function tryAuth() {
+  if ($('auth-input').value === SENHA) {
+    _authOk = true;
+    $('auth-overlay').style.display = 'none';
+    $('auth-error').style.display   = 'none';
+    if (_authQueue) { _authQueue(); _authQueue = null; }
+  } else {
+    $('auth-error').style.display = 'block';
+    $('auth-input').value = '';
+    $('auth-input').focus();
+  }
+}
+
+$('auth-confirm').addEventListener('click', tryAuth);
+$('auth-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryAuth(); });
+$('auth-cancel').addEventListener('click', () => {
+  $('auth-overlay').style.display = 'none';
+  _authQueue = null;
+});
+
+
 /* ======================== PUBLICAR NO GITHUB ======================== */
 const GH_OWNER = 'gabrielhdvieira';
 const GH_REPO  = 'painel-restricoes-itabiritos';
 const GH_FILE  = 'index.html';
 
 function openPublishModal() {
-  $('pub-token').value = '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';
-  $('pub-msg').value   = '';
-  $('pub-status').style.display = 'none';
-  $('pub-confirm').disabled = false;
-  $('pub-confirm').textContent = '🚀 Publicar agora';
-  $('publish-overlay').style.display = 'flex';
-}
-
-function closePublishModal() {
-  $('publish-overlay').style.display = 'none';
-}
-
-function pubStatus(msg, type) {
-  const el = $('pub-status');
-  el.style.display = 'block';
-  el.style.background = type === 'ok' ? '#dcfce7' : type === 'err' ? '#fee2e2' : '#fef9c3';
-  el.style.color      = type === 'ok' ? '#15803d' : type === 'err' ? '#b91c1c' : '#854d0e';
-  el.textContent = msg;
-}
-
-async function publishToGitHub() {
-  const token = $('pub-token').value.trim();
-  const msg = $('pub-msg').value.trim() || ('Painel atualizado — ' + new Date().toLocaleString('pt-BR'));
-  $('pub-confirm').disabled = true;
-  $('pub-confirm').textContent = '⏳ Publicando...';
-  pubStatus('Conectando ao GitHub...', 'warn');
-
-  const API = `https://api.github.com/repos/${GH_OWNER}/${GH_REPO}/contents/${GH_FILE}`;
-  const headers = {
-    'Authorization': `token ${token}`,
-    'Accept': 'application/vnd.github.v3+json',
-    'Content-Type': 'application/json'
-  };
-
-  try {
-    // 1. Buscar SHA atual
-    pubStatus('Buscando versão atual...', 'warn');
-    const infoRes = await fetch(API, { headers });
-    if (!infoRes.ok) throw new Error(`Erro ao buscar arquivo: ${infoRes.status}`);
-    const info = await infoRes.json();
-    const sha  = info.sha;
-
-    // 2. Montar HTML atualizado — substitui BASE_DATA pelo DATA atual
-    pubStatus('Preparando arquivo...', 'warn');
-    const newDataJson = JSON.stringify(DATA);
-    let   currentHtml = document.documentElement.outerHTML;
-    currentHtml = currentHtml.replace(
-      /const BASE_DATA = \[.*?\];/s,
-      `const BASE_DATA = ${newDataJson};`
-    );
-
-    // 3. Codificar em base64
-    const encoded = btoa(unescape(encodeURIComponent(currentHtml)));
-
-    // 4. Commit
-    pubStatus('Publicando no GitHub...', 'warn');
-    const putRes = await fetch(API, {
-      method: 'PUT',
-      headers,
-      body: JSON.stringify({ message: msg, content: encoded, sha })
-    });
-    if (!putRes.ok) {
-      const err = await putRes.json();
-      throw new Error(err.message || putRes.status);
-    }
-
-    pubStatus('✅ Publicado com sucesso! O painel online atualiza em ~60 segundos.', 'ok');
-    $('pub-confirm').textContent = '✅ Publicado!';
-    setTimeout(closePublishModal, 3000);
-
-  } catch(e) {
-    pubStatus(`❌ Erro: ${e.message}`, 'err');
-    $('pub-confirm').disabled = false;
-    $('pub-confirm').textContent = '🚀 Tentar novamente';
-  }
-}
-
-$('btn-publish').addEventListener('click', openPublishModal);
-$('pub-cancel').addEventListener('click', closePublishModal);
-$('pub-confirm').addEventListener('click', publishToGitHub);
-$('publish-overlay').addEventListener('click', e => { if (e.target === $('publish-overlay')) closePublishModal(); });
-
-    console.log('✓ Painel Itabiritos v2 carregado · ' + DATA.length + ' restrições');
-  try {
-    initFilters();
-    render();
-  } catch(e) {
-    console.error('❌ Erro:', e);
-    alert('Erro: ' + e.message);
-  }
-});
-</script>
-</body>
-</html>
+  $('pub-token
